@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2017.12.10)  19 NOV 2018 00:44
+This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2016.5.22)  19 NOV 2018 01:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -886,21 +886,21 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
 [1
 
-] [2] [3] [4] [5]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 290.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 290.
+] [2] [3] [4] [5] [6]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 305.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 305.
  (./UseCase.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 290.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 290.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 290.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 305.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 305.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 305.
  ) 
 Here is how much of TeX's memory you used:
  22029 strings out of 493591
- 402394 string characters out of 6143545
+ 402394 string characters out of 6143546
  456057 words of memory out of 5000000
  25255 multiletter control sequences out of 15000+600000
  7026 words of font info for 48 fonts, out of 8000000 for 9000
  1347 hyphenation exceptions out of 8191
- 54i,11n,63p,10402b,340s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 54i,11n,63p,10402b,398s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on UseCase.pdf (5 pages).
+Output written on UseCase.pdf (6 pages).
