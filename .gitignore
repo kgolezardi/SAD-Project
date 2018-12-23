@@ -1,267 +1,248 @@
 
-# Created by https://www.gitignore.io/api/tex
-# Edit at https://www.gitignore.io/?templates=tex
+# Created by https://www.gitignore.io/api/django
+# Edit at https://www.gitignore.io/?templates=django
 
-### TeX ###
-## Core latex/pdflatex auxiliary files:
-*.aux
-*.lof
+### Django ###
 *.log
-*.lot
-*.fls
-*.out
-*.toc
-*.fmt
-*.fot
-*.cb
-*.cb2
-.*.lb
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media
 
-## Intermediate documents:
-*.dvi
-*.xdv
-*-converted-to.*
-# these rules might exclude image files for figures etc.
-# *.ps
-# *.eps
-# *.pdf
+# If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
+# in your Git repository. Update and uncomment the following line accordingly.
+# <django-project-name>/staticfiles/
 
-## Generated if empty string is given at "Please type another file name for output:"
-.pdf
+### Django.Python Stack ###
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
 
-## Bibliography auxiliary files (bibtex/biblatex/biber):
-*.bbl
-*.bcf
-*.blg
-*-blx.aux
-*-blx.bib
-*.run.xml
+# C extensions
+*.so
 
-## Build tool auxiliary files:
-*.fdb_latexmk
-*.synctex
-*.synctex(busy)
-*.synctex.gz
-*.synctex.gz(busy)
-*.pdfsync
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-## Build tool directories for auxiliary files
-# latexrun
-latex.out/
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
 
-## Auxiliary and intermediate files from other packages:
-# algorithms
-*.alg
-*.loa
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
 
-# achemso
-acs-*.bib
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
 
-# amsthm
-*.thm
+# Translations
+*.mo
 
-# beamer
-*.nav
-*.pre
-*.snm
-*.vrb
+# Django stuff:
 
-# changes
-*.soc
+# Flask stuff:
+instance/
+.webassets-cache
 
-# comment
-*.cut
+# Scrapy stuff:
+.scrapy
 
-# cprotect
-*.cpt
+# Sphinx documentation
+docs/_build/
 
-# elsarticle (documentclass of Elsevier journals)
-*.spl
+# PyBuilder
+target/
 
-# endnotes
-*.ent
+# Jupyter Notebook
+.ipynb_checkpoints
 
-# fixme
-*.lox
+# IPython
+profile_default/
+ipython_config.py
 
-# feynmf/feynmp
-*.mf
-*.mp
-*.t[1-9]
-*.t[1-9][0-9]
-*.tfm
+# pyenv
+.python-version
 
-#(r)(e)ledmac/(r)(e)ledpar
-*.end
-*.?end
-*.[1-9]
-*.[1-9][0-9]
-*.[1-9][0-9][0-9]
-*.[1-9]R
-*.[1-9][0-9]R
-*.[1-9][0-9][0-9]R
-*.eledsec[1-9]
-*.eledsec[1-9]R
-*.eledsec[1-9][0-9]
-*.eledsec[1-9][0-9]R
-*.eledsec[1-9][0-9][0-9]
-*.eledsec[1-9][0-9][0-9]R
+# celery beat schedule file
+celerybeat-schedule
 
-# glossaries
-*.acn
-*.acr
-*.glg
-*.glo
-*.gls
-*.glsdefs
+# SageMath parsed files
+*.sage.py
 
-# gnuplottex
-*-gnuplottex-*
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# gregoriotex
-*.gaux
-*.gtex
+# Spyder project settings
+.spyderproject
+.spyproject
 
-# htlatex
-*.4ct
-*.4tc
-*.idv
-*.lg
-*.trc
-*.xref
+# Rope project settings
+.ropeproject
 
-# hyperref
-*.brf
+# mkdocs documentation
+/site
 
-# knitr
-*-concordance.tex
-# TODO Comment the next line if you want to keep your tikz graphics files
-*.tikz
-*-tikzDictionary
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-# listings
-*.lol
+# Pyre type checker
+.pyre/
 
-# makeidx
-*.idx
-*.ilg
-*.ind
-*.ist
+# End of https://www.gitignore.io/api/django
 
-# minitoc
-*.maf
-*.mlf
-*.mlt
-*.mtc[0-9]*
-*.slf[0-9]*
-*.slt[0-9]*
-*.stc[0-9]*
+# Created by https://www.gitignore.io/api/pycharm
+# Edit at https://www.gitignore.io/?templates=pycharm
 
-# minted
-_minted*
-*.pyg
+### PyCharm ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
-# morewrites
-*.mw
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
 
-# nomencl
-*.nlg
-*.nlo
-*.nls
+# Generated files
+.idea/**/contentModel.xml
 
-# pax
-*.pax
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
 
-# pdfpcnotes
-*.pdfpc
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
 
-# sagetex
-*.sagetex.sage
-*.sagetex.py
-*.sagetex.scmd
+# Gradle and Maven with auto-import
+# When using Gradle or Maven with auto-import, you should exclude module files,
+# since they will be recreated, and may cause churn.  Uncomment if using
+# auto-import.
+# .idea/modules.xml
+# .idea/*.iml
+# .idea/modules
 
-# scrwfile
-*.wrt
+# CMake
+cmake-build-*/
 
-# sympy
-*.sout
-*.sympy
-sympy-plots-for-*.tex/
+# Mongo Explorer plugin
+.idea/**/mongoSettings.xml
 
-# pdfcomment
-*.upa
-*.upb
+# File-based project format
+*.iws
 
-# pythontex
-*.pytxcode
-pythontex-files-*/
+# IntelliJ
+out/
 
-# tcolorbox
-*.listing
+# mpeltonen/sbt-idea plugin
+.idea_modules/
 
-# thmtools
-*.loe
+# JIRA plugin
+atlassian-ide-plugin.xml
 
-# TikZ & PGF
-*.dpth
-*.md5
-*.auxlock
+# Cursive Clojure plugin
+.idea/replstate.xml
 
-# todonotes
-*.tdo
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
 
-# easy-todo
-*.lod
+# Editor-based Rest Client
+.idea/httpRequests
 
-# xcolor
-*.xcp
+# Android studio 3.1+ serialized cache file
+.idea/caches/build_file_checksums.ser
 
-# xmpincl
-*.xmpi
+### PyCharm Patch ###
+# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
 
-# xindy
-*.xdy
+# *.iml
+# modules.xml
+# .idea/misc.xml
+# *.ipr
 
-# xypic precompiled matrices
-*.xyc
+# Sonarlint plugin
+.idea/sonarlint
 
-# endfloat
-*.ttt
-*.fff
+# End of https://www.gitignore.io/api/pycharm
 
-# Latexian
-TSWLatexianTemp*
 
-## Editors:
-# WinEdt
-*.bak
-*.sav
+# Created by https://www.gitignore.io/api/macos
+# Edit at https://www.gitignore.io/?templates=macos
 
-# Texpad
-.texpadtmp
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# LyX
-*.lyx~
+# Icon must end with two \r
+Icon
 
-# Kile
-*.backup
+# Thumbnails
+._*
 
-# KBibTeX
-*~[0-9]*
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 
-# auto folder when using emacs and auctex
-./auto/*
-*.el
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
 
-# expex forward references with \gathertags
-*-tags.tex
-
-# standalone packages
-*.sta
-
-### TeX Patch ###
-# glossaries
-*.glstex
-
-# End of https://www.gitignore.io/api/tex
-
+# End of https://www.gitignore.io/api/macos

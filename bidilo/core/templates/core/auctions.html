@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auctions List</title>
+</head>
+<body>
+    {% if auction_list %}
+        <ul>
+            {% for auction in auction_list %}
+                <li>
+                    <a href="{% url 'core:description' auction.id %}">
+                        {{ auction.title }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p> No Auction Available </p>
+    {% endif %}
+</body>
+</html>
