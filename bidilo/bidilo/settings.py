@@ -71,7 +71,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bidilo.wsgi.application'
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'core:home'
+LOGOUT_REDIRECT_URL = 'core:home'
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
