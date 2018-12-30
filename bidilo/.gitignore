@@ -245,4 +245,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Our own ignores
+.idea
+
 # End of https://www.gitignore.io/api/macos
