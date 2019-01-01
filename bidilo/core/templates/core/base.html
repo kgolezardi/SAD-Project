@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+{% load bootstrap4 %}
+
+<html lang="en">
+
+<head>
+    {% block head_content %}
+        <title>
+            {% block title %}
+                Bidilo
+            {% endblock %}
+        </title>
+        {% block css %}
+            <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.css' %}" />
+            <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/font-awesome.css' %}" />
+            <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+        {% endblock %}
+
+        {% block head_js %}
+        {% endblock %}
+
+        {% block head_meta %}
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        {%  endblock %}
+    {% endblock %}
+</head>
+<body>
+    {% block body_content %}
+        {% block header %}
+        <nav class="navbar-default navbar">
+            <div class="container-fluid" >
+                <div class="navbar-header ">
+                        <a href="#" class="navbar-brand">
+                            <img class="img img-responsive" src="{% static 'img/logo-full.png' %}"  alt="Bidilo" />
+                        </a>
+                    <h1 class="sr-only">Bidilo</h1>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li> <a href="{% url "core:home" %}"> Home </a></li>
+                </ul>
+                <div class="navbar-right ">
+                    <p class="navbar-text">
+                        {% if user.is_authenticated %}
+                            You're logged in as <a href="{% url "accounts:login" %}">{{ user }}</a>
+                            (<a href="{% url "accounts:login" %}">Change Password</a> |
+                             <a href="{% url "accounts:logout" %}">Logout</a>)
+                        {% else %}
+                            <a href="{% url "accounts:login" %}">Login</a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </nav>
+        {% endblock %}
+        {% bootstrap_messages %}
+
+        {% block content %}
+        {% endblock %}
+
+        {% block foot_js %}
+            <script src="{% static 'jquery/js/jquery.min.js' %}"></script>
+            <script src="{% static 'popper.js/js/popper.min.js' %}"></script>
+            <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+        {% endblock %}
+    {% endblock %}
+</body>
+</html>

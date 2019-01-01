@@ -1,19 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
-    <h2>Login</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Login</button>
-    </form>
-    <p>
-        Or if you want to create an account,
-        <a href="{% url 'accounts:signup' %}">sign up</a>.
-    </p>
-</body>
-</html>
+{%  extends "core/base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-5"></div>
+        <div class="col-sm-3">
+            <h1>Login</h1>
+            <form class="form-horizontal" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button type="submit" class="form-control btn btn-success">Submit</button>
+                {% endbuttons %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
