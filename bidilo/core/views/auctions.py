@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 
-from core.forms.auctions import AuctionCreateForm
+from core.forms import AuctionCreateForm
 from core.models import Auction
 
 

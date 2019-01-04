@@ -7,5 +7,10 @@
 <body>
     <h1>{{ auction.title }}</h1>
     <p>{{ auction.description }}</p>
+    <form action="/next_page/" method="post">
+        <label for="my_name">Your name: </label>
+        <input id="my_name" type="text" name="her_name" value="{{ auction.description }}">
+        <input type="submit" value="OK">
+    </form>
 </body>
 </html>
