@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sign up</title>
-</head>
-<body>
-    <h2>Sign up</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Register</button>
-    </form>
-</body>
-</html>
+{% extends "core/base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <h1 class="my-4">Sign up</h1>
+            <form class="form-horizontal" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button type="submit" class="form-control btn btn-primary">Register</button>
+                {% endbuttons %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

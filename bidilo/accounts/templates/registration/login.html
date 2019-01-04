@@ -14,6 +14,10 @@
                     <button type="submit" class="form-control btn btn-success">Login</button>
                 {% endbuttons %}
             </form>
+            <p class="text-center">
+                ... or alternativly, you can
+                <a href="{% url 'accounts:signup' %}">Sign up</a>!
+            </p>
         </div>
     </div>
 {% endblock %}
