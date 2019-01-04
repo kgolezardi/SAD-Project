@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Credit</title>
+</head>
+<body>
+    <p>
+        Current Credit: {{ user.credit }}
+    </p>
+    <ul>
+        <li>
+            <a href="{% url 'core:charge_credit' %}">Charge</a>
+        </li>
+        <li>
+            <a href="{% url 'core:withdraw_credit' %}">Withdraw</a>
+        </li>
+    </ul>
+</body>
+</html>
