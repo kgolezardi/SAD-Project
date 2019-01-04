@@ -1,12 +1,13 @@
 
 html {
-    min-height: 100%;
-    height: auto;
+    height: 100%;
 }
 
 body {
+    position: relative;
     padding-top: 54px;
-    height: 100%;
+    padding-bottom: 80px;
+    min-height: 100%;
     background-color: whitesmoke;
 }
 
@@ -22,6 +23,13 @@ body {
 
 .pagination {
     margin-bottom: 30px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
 }
 
 

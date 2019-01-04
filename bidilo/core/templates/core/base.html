@@ -61,6 +61,15 @@
     {% block content %}
     {% endblock %}
 
+    {% block footer %}
+        <footer class="py-3 bg-dark footer">
+            <div class="container">
+                <p class="m-0 text-center text-white">Copyright &copy; Bidilo 2019</p>
+                <p class="m-0 text-center text-white">By Seyed Parsa Mirtaheri &amp; Kiarash Golezardi</p>
+            </div>
+        </footer>
+    {% endblock %}
+
     {% block foot_js %}
         <script src="{% static 'jquery/js/jquery.min.js' %}"></script>
         <script src="{% static 'popper.js/js/popper.min.js' %}"></script>
