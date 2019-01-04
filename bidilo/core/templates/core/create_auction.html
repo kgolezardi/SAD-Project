@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create auction</title>
-</head>
-<body>
-    <h2>Create Auction</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Create</button>
-    </form>
-</body>
-</html>
+{% extends "core/base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <h1 class="my-4">Create new auction</h1>
+            <form class="form-horizontal" method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button type="submit" class="form-control btn btn-success">Create auction</button>
+                {% endbuttons %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
