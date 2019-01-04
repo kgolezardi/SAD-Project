@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -22,7 +21,7 @@ class AuctionCreateView(View):
     template_name = "core/create_auction.html"
 
     def post(self, request):
-        form = AuctionCreateForm(request.POST)
+        form = AuctionCreateForm(request.POST, owner=request.user)
         if form.is_valid():
             obj = form.save()
             return HttpResponseRedirect(reverse("core:description", kwargs={
@@ -32,5 +31,5 @@ class AuctionCreateView(View):
         return render(request, self.template_name, context={"form": form})
 
     def get(self, request):
-        form = AuctionCreateForm()
+        form = AuctionCreateForm(owner=request.user)
         return render(request, self.template_name, context={"form": form})

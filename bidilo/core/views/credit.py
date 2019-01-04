@@ -5,9 +5,11 @@ from django.urls import reverse
 from core.forms import ChargeCreditForm
 from core.forms import WithdrawCreditForm
 
+
 @login_required
 def credit(request):
     return render(request, 'core/credit.html')
+
 
 @login_required
 def charge_credit(request):
@@ -20,7 +22,8 @@ def charge_credit(request):
             return HttpResponseRedirect(reverse('core:credit'))
     else:
         form = ChargeCreditForm()
-    return render(request, 'core/charge_credit.html', {'form':form})
+    return render(request, 'core/charge_credit.html', {'form': form})
+
 
 @login_required
 def withdraw_credit(request):
@@ -37,4 +40,4 @@ def withdraw_credit(request):
                 form.add_error('withdraw_amount', "You can't withdraw more than your current credit.")
     else:
         form = WithdrawCreditForm()
-    return render(request, 'core/withdraw_credit.html', {'form':form})
+    return render(request, 'core/withdraw_credit.html', {'form': form})
