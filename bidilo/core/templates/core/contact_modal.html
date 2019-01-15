@@ -1,0 +1,26 @@
+{% if auction.finished %}
+    <div id="contactModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Contact Info</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    {% if auction.highest_bid is None %}
+                        Unfotunatly, no one has made a bid on your item.
+                    {% else %}
+                        <p><strong>Name: </strong>{{ auction.highest_bid.owner.name }}</p>
+                        <p><strong>Email: </strong>{{ auction.highest_bid.owner.email }}</p>
+                        <p><strong>Address: </strong>{{ auction.highest_bid.owner.address }}</p>
+                        <p><strong>Phone Number: </strong>{{ auction.highest_bid.owner.phone_number }}</p>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

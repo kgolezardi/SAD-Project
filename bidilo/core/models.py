@@ -14,7 +14,7 @@ class Auction(models.Model):
     base_price = models.PositiveIntegerField(default=10000, help_text='Base price in Tomans')
     deadline = models.DateTimeField(verbose_name='Finish date')
     received = models.BooleanField(default=False)
-    receive_date = models.DateTimeField(null=True, verbose_name='Receipt date')
+    receive_date = models.DateTimeField(null=True, blank=True, verbose_name='Receipt date')
 
     @property
     def highest_bid(self):

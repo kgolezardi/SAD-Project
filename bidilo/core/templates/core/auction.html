@@ -36,27 +36,32 @@
                 <h3 class="my-3">Time till closing</h3>
                 <p><strong id="countdown"></strong></p>
                 <br/>
+
                 {% if not auction.owner == user %}
                     <button class="btn btn-success btn-block" id="bid-btn" data-toggle="modal" data-target="#bidModal">
                         Bid Now!
                     </button>
                 {% endif %}
 
-                {% if auction.owner == user %}
-                    {% if auction.received %}
-                        <br/><p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
-                    {% else %}
-                        <button class="btn btn-primary btn-block" id="contact-btn" data-toggle="modal" data-target="#bidModal" disabled>
-                            Get Highest Bidder Contact Info
-                        </button>
-                    {% endif %}
-                {% elif not auction.highest_bid is None and auction.highest_bid.owner == user %}
-                    {% if auction.received %}
-                        <br/><p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
-                    {% else %}
-                        <button class="btn btn-info btn-block" id="receipt-btn" data-toggle="modal" data-target="#receiptModal" disabled>
-                            Conform Receipt of The Item
-                        </button>
+                {% if auction.finished %}
+                    {% if auction.owner == user %}
+                        {% if auction.received %}
+                            <p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
+                        {% else %}
+                            <button class="btn btn-primary btn-block" id="contact-btn" data-toggle="modal"
+                                    data-target="#contactModal">
+                                Get Highest Bidder Contact Info
+                            </button>
+                        {% endif %}
+                    {% elif not auction.highest_bid is None and auction.highest_bid.owner == user %}
+                        {% if auction.received %}
+                            <br/><p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
+                        {% else %}
+                            <button class="btn btn-info btn-block" id="receipt-btn" data-toggle="modal"
+                                    data-target="#receiptModal">
+                                Conform Receipt of The Item
+                            </button>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>
@@ -124,6 +129,9 @@
     <!-- Receipt Modal -->
     {% include 'core/receipt_modal.html' %}
 
+    <!-- Contact Modal -->
+    {% include 'core/contact_modal.html' %}
+
     <!-- Countdown Script -->
     <script type="text/javascript">
         var countdown = document.getElementById('countdown');
@@ -145,14 +153,8 @@
                 countdown.innerHTML = "THE BID IS CLOSED";
                 countdown.classList.add('text-danger');
                 var bidBtn = document.getElementById('bid-btn');
-                var contactBtn = document.getElementById('contact-btn');
-                var receiptBtn = document.getElementById('receipt-btn');
                 if (bidBtn)
                     bidBtn.disabled = true;
-                if (contactBtn)
-                    contactBtn.disabled = false;
-                if (receiptBtn)
-                    receiptBtn.disabled = false;
             }
         }
     </script>
