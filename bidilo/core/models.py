@@ -32,3 +32,9 @@ class Bid(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
     price = models.PositiveIntegerField()
+    date = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.date = timezone.now()
+        return super().save(*args, **kwargs)
