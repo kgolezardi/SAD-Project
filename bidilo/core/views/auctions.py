@@ -22,7 +22,7 @@ def description(request, auction_id):
 @login_required
 def offer_bid(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
-    if auction.finilized:
+    if auction.finished:
         messages.add_message(request, messages.ERROR, 'The auction is now finished. You cannot offer bid for finished'
                                                       'aucitons.')
         return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
@@ -44,7 +44,7 @@ def offer_bid(request, auction_id):
 @login_required
 def confirm_receipt(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
-    if not auction.finilized:
+    if not auction.finished:
         messages.add_message(request, messages.ERROR, 'The auciton is not finished yet.')
         return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
     highest_bid = auction.highest_bid

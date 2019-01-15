@@ -21,7 +21,7 @@ class Auction(models.Model):
         return self.bid_set.last()
 
     @property
-    def finilized(self):
+    def finished(self):
         return self.deadline < timezone.now()
 
     def receive(self):
