@@ -36,9 +36,14 @@
                 <h3 class="my-3">Time till closing</h3>
                 <p><strong id="countdown"></strong></p>
                 <br/>
-                <button class="btn btn-success w-100" id="bid-btn" data-toggle="modal" data-target="#bidModal">
+                <p><button class="btn btn-success w-100" id="bid-btn" data-toggle="modal" data-target="#bidModal">
                     Bid Now!
-                </button>
+                </button></p>
+                {% if auction.owner == user %}
+                    <p><button class="btn btn-primary w-100" {% if not auction.finilized %}disabled{% endif %}>
+                            Get Highest Bidder Contact Info
+                    </button></p>
+                {% endif %}
             </div>
 
         </div>
@@ -71,7 +76,30 @@
         <!-- /.row -->
 
         <h3 class="my-4">Bid history</h3>
-        <h5 class="my-4">None</h5>
+        {% if auction.bid_set.all  %}
+            <table class="table table-striped table-hover table-">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Person</th>
+                    <th>Price</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for bid in auction.bid_set.all reversed %}
+                    <tr>
+                        <td>{{ forloop.revcounter }}</td>
+                        <td>{{ bid.owner.username }}</td>
+                        <td>{{ bid.price }}</td>
+                        <td>{{ bid.date|date:"l, d M Y, g:i A" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h5 class="my-4">None</h5>
+        {% endif %}
     </div>
     <!-- /.container -->
 
