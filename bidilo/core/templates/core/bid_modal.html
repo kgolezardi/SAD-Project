@@ -12,8 +12,7 @@
                     <div class="form-group">
                         <label for="offer-price">Offer price:</label>
                         <input type="number" class="form-control" id="offer-price" name="price"
-                               value="
-                                       {% if auction.highest_bid is None %}{{ auction.base_price }}{% else %}{{ auction.highest_bid.price }}{% endif %}">
+                               value="{% if auction.highest_bid is None %}{{ auction.base_price }}{% else %}{{ auction.highest_bid.price }}{% endif %}">
                     </div>
                 </div>
                 <div class="modal-footer">

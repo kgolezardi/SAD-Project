@@ -25,6 +25,10 @@ class Auction(models.Model):
         return self.deadline < timezone.now()
 
     def receive(self):
+        highest_bid = self.highest_bid
+        highest_bid.owner.pay(highest_bid.price)
+        # FIXME: send notification
+        self.owner.charge_credit(highest_bid.price)
         self.received = True
         self.receive_date = timezone.now()
         self.save()
@@ -37,6 +41,16 @@ class Auction(models.Model):
     def valid_price(self, price):
         return price < self.base_price or \
                self.highest_bid is not None and price < self.highest_bid.price
+
+    def place_bid(self, user, price):
+        # FIXME: atomic
+        highest_bid = self.highest_bid
+        if highest_bid is not None:
+            highest_bid.owner.release_credit(highest_bid.price)
+            # FIXME: send notification
+        user.reserve_credit(price)
+        bid = Bid(owner=user, auction=self, price=price)
+        bid.save()
 
 
 class Bid(models.Model):

@@ -21,23 +21,27 @@ def description(request, auction_id):
 
 @login_required
 def offer_bid(request, auction_id):
-    AUCTION_FINISHED_MESSAGE = 'The auction is now finished. You cannot offer bid for finished aucitons.';
-    LOW_PRICE_MESSAGE = 'Your price is not high enough. It should be higher than the current highest bid and the base ' \
-                        'price.'
+    AUCTION_FINISHED_MESSAGE = 'The auction is now finished. You cannot offer bid for finished aucitons.'
+    LOW_PRICE_MESSAGE = 'Your price is not high enough. It should be higher than the current highest bid and the ' \
+                        'base price.'
     OWN_AUCTION_MESSAGE = 'You cannot bid on your own auction.'
     SUCCESSFULL_BID_MESSAGE = 'You have successfully bid on this auction.'
+    NO_CREDIT_MESSAGE = 'You do not have enough credit in your account. Please charge your credit before offering a ' \
+                        'higher bid. '
 
     auction = get_object_or_404(Auction, id=auction_id)
     price = int(request.POST.get("price", 0))
+
     if auction.finished:
         messages.add_message(request, messages.ERROR, AUCTION_FINISHED_MESSAGE)
     elif auction.valid_price(price):
         messages.add_message(request, messages.ERROR, LOW_PRICE_MESSAGE)
     elif request.user == auction.owner:
         messages.add_message(request, messages.ERROR, OWN_AUCTION_MESSAGE)
+    elif not request.user.can_pay(price):
+        messages.add_message(request, messages.ERROR, NO_CREDIT_MESSAGE)
     else:
-        bid = Bid(auction=auction, owner=request.user, price=price)
-        bid.save()
+        auction.place_bid(request.user, price)
         messages.add_message(request, messages.SUCCESS, SUCCESSFULL_BID_MESSAGE)
 
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
@@ -52,6 +56,7 @@ def confirm_receipt(request, auction_id):
 
     auction = get_object_or_404(Auction, id=auction_id)
     highest_bid = auction.highest_bid
+
     if not auction.finished:
         messages.add_message(request, messages.ERROR, UNFINISHED_MESSAGE)
     elif highest_bid is None or highest_bid.owner != request.user:
