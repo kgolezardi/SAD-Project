@@ -21,41 +21,47 @@ def description(request, auction_id):
 
 @login_required
 def offer_bid(request, auction_id):
+    AUCTION_FINISHED_MESSAGE = 'The auction is now finished. You cannot offer bid for finished aucitons.';
+    LOW_PRICE_MESSAGE = 'Your price is not high enough. It should be higher than the current highest bid and the base ' \
+                        'price.'
+    OWN_AUCTION_MESSAGE = 'You cannot bid on your own auction.'
+    SUCCESSFULL_BID_MESSAGE = 'You have successfully bid on this auction.'
+
     auction = get_object_or_404(Auction, id=auction_id)
-    if auction.finished:
-        messages.add_message(request, messages.ERROR, 'The auction is now finished. You cannot offer bid for finished'
-                                                      'aucitons.')
-        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
-    highest_bid = auction.highest_bid
     price = int(request.POST.get("price", 0))
-    if price < auction.base_price or highest_bid is not None and price < highest_bid.price:
-        messages.add_message(request, messages.ERROR, 'Your price is not high enough. It should be higher than the '
-                                                      'current highest bid and the base price.')
-        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
-    if request.user == auction.owner:
-        messages.add_message(request, messages.ERROR, 'You cannot bid on your own auction.')
-        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
-    bid = Bid(auction=auction, owner=request.user, price=price)
-    bid.save()
-    messages.add_message(request, messages.SUCCESS, 'You have successfully bid on this auction.')
+    if auction.finished:
+        messages.add_message(request, messages.ERROR, AUCTION_FINISHED_MESSAGE)
+    elif auction.valid_price(price):
+        messages.add_message(request, messages.ERROR, LOW_PRICE_MESSAGE)
+    elif request.user == auction.owner:
+        messages.add_message(request, messages.ERROR, OWN_AUCTION_MESSAGE)
+    else:
+        bid = Bid(auction=auction, owner=request.user, price=price)
+        bid.save()
+        messages.add_message(request, messages.SUCCESS, SUCCESSFULL_BID_MESSAGE)
+
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 
 @login_required
 def confirm_receipt(request, auction_id):
+    INVALID_USER_MESSAGE = 'You are not the highest bidder.'
+    UNFINISHED_MESSAGE = 'The auciton is not finished yet.'
+    ALREADY_RECEIVED_MESSAGE = 'The item is already received.'
+    SUCCESSFULL_RECEIVE_MESSAGE = 'You have successfully received the item.'
+
     auction = get_object_or_404(Auction, id=auction_id)
-    if not auction.finished:
-        messages.add_message(request, messages.ERROR, 'The auciton is not finished yet.')
-        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
     highest_bid = auction.highest_bid
-    if highest_bid is None or highest_bid.owner != request.user:
-        messages.add_message(request, messages.ERROR, 'You are not the highest bidder.')
-        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
-    if auction.received:
-        messages.add_message(request, messages.ERROR, 'The item is already received.')
-        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
-    auction.receive()
-    messages.add_message(request, messages.SUCCESS, 'You have successfully received the item.')
+    if not auction.finished:
+        messages.add_message(request, messages.ERROR, UNFINISHED_MESSAGE)
+    elif highest_bid is None or highest_bid.owner != request.user:
+        messages.add_message(request, messages.ERROR, INVALID_USER_MESSAGE)
+    elif auction.received:
+        messages.add_message(request, messages.ERROR, ALREADY_RECEIVED_MESSAGE)
+    else:
+        auction.receive()
+        messages.add_message(request, messages.SUCCESS, SUCCESSFULL_RECEIVE_MESSAGE)
+
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 

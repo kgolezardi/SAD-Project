@@ -34,6 +34,10 @@ class Auction(models.Model):
             self.pub_date = timezone.now()
         return super().save(*args, **kwargs)
 
+    def valid_price(self, price):
+        return price < self.base_price or \
+               self.highest_bid is not None and price < self.highest_bid.price
+
 
 class Bid(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
