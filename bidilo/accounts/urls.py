@@ -6,6 +6,7 @@ from accounts import views
 app_name = 'accounts'
 urlpatterns = [
     path('', include('django.contrib.auth.urls')),
-    path('signup/', views.SignUp.as_view(), name='signup'),
+    path('profile', views.ProfileView.as_view(), name='profile'),
+    path('signup', views.SignUpView.as_view(), name='signup'),
 
 ]
