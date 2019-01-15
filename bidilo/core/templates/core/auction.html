@@ -36,13 +36,28 @@
                 <h3 class="my-3">Time till closing</h3>
                 <p><strong id="countdown"></strong></p>
                 <br/>
-                <p><button class="btn btn-success w-100" id="bid-btn" data-toggle="modal" data-target="#bidModal">
-                    Bid Now!
-                </button></p>
-                {% if auction.owner == user %}
-                    <p><button class="btn btn-primary w-100" {% if not auction.finilized %}disabled{% endif %}>
-                            Get Highest Bidder Contact Info
+                {% if not auction.owner == user %}
+                    <p><button class="btn btn-success w-100" id="bid-btn" data-toggle="modal" data-target="#bidModal">
+                        Bid Now!
                     </button></p>
+                {% endif %}
+
+                {% if auction.owner == user %}
+                    {% if auction.received %}
+                        <p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
+                    {% else %}
+                        <p><button class="btn btn-primary w-100" id="contact-btn" data-toggle="modal" data-target="#bidModal" disabled>
+                            Get Highest Bidder Contact Info
+                        </button></p>
+                    {% endif %}
+                {% elif not auction.highest_bid is None and auction.highest_bid.owner == user %}
+                    {% if auction.received %}
+                        <p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
+                    {% else %}
+                        <p><button class="btn btn-info w-100" id="receipt-btn" data-toggle="modal" data-target="#receiptModal" disabled>
+                            Conform Receipt of The Item
+                        </button></p>
+                    {% endif %}
                 {% endif %}
             </div>
 
@@ -118,12 +133,35 @@
                         <div class="form-group">
                             <label for="offer-price">Offer price:</label>
                             <input type="number" class="form-control" id="offer-price" name="price"
-                                   value="{% if auction.highest_bid is None %}{{ auction.base_price }}{% else %}{{ auction.base_price }}{% endif %}">
+                                   value="{% if auction.highest_bid is None %}{{ auction.base_price }}{% else %}{{ auction.highest_bid.price }}{% endif %}">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Bid</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <form action="{% url 'core:receipt' auction.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Confirm</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        Do you confirm the receipt of the item?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Yes</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
                     </div>
                 </div>
             </form>
@@ -150,7 +188,15 @@
                 clearInterval(x);
                 countdown.innerHTML = "THE BID IS CLOSED";
                 countdown.classList.add('text-danger');
-                document.getElementById('bid-btn').disabled = true;
+                var bidBtn = document.getElementById('bid-btn');
+                var contactBtn = document.getElementById('contact-btn');
+                var receiptBtn = document.getElementById('receipt-btn');
+                if (bidBtn)
+                    bidBtn.disabled = true;
+                if (contactBtn)
+                    contactBtn.disabled = false;
+                if (receiptBtn)
+                    receiptBtn.disabled = false;
             }
         }
     </script>

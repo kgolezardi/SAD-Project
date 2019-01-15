@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -33,9 +32,30 @@ def offer_bid(request, auction_id):
         messages.add_message(request, messages.ERROR, 'Your price is not high enough. It should be higher than the '
                                                       'current highest bid and the base price.')
         return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+    if request.user == auction.owner:
+        messages.add_message(request, messages.ERROR, 'You cannot bid on your own auction.')
+        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
     bid = Bid(auction=auction, owner=request.user, price=price)
     bid.save()
     messages.add_message(request, messages.SUCCESS, 'You have successfully bid on this auction.')
+    return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+
+
+@login_required
+def confirm_receipt(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    if not auction.finilized:
+        messages.add_message(request, messages.ERROR, 'The auciton is not finished yet.')
+        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+    highest_bid = auction.highest_bid
+    if highest_bid is None or highest_bid.owner != request.user:
+        messages.add_message(request, messages.ERROR, 'You are not the highest bidder.')
+        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+    if auction.received:
+        messages.add_message(request, messages.ERROR, 'The item is already received.')
+        return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+    auction.receive()
+    messages.add_message(request, messages.SUCCESS, 'You have successfully received the item.')
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 
