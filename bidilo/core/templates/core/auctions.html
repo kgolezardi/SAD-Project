@@ -16,6 +16,27 @@
             </div>
         </div>
 
+        <script type="text/javascript">
+            function updateCountdown(date, auction_number) {
+                var countdown = document.getElementById('countdown' + auction_number);
+
+                var now = new Date().getTime();
+                var distance = date - now;
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                countdown.innerHTML = "Finishes in: " + days.toString().padStart(2, '0') + ":"
+                    + hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":"
+                    + seconds.toString().padStart(2, '0');
+                if (distance > 0)
+                    setTimeout(updateCountdown, 1000, date, auction_number);
+                else {
+                    countdown.innerHTML = "Finished";
+                    countdown.classList.add('text-danger');
+                }
+            }
+        </script>
 
         <div class="row">
             {% if auction_list %}
@@ -28,10 +49,15 @@
                                     <a href="{% url 'core:description' auction.id %}">{{ auction.title }}</a>
                                 </h4>
                                 <p class="card-text">{{ auction.short_description }}</p>
-                                Expires in: 03:00:12
+                                <span id="countdown{{ forloop.counter }}"></span>
                             </div>
                         </div>
                     </div>
+
+                    <script type="text/javascript">
+                        var date = new Date("{{ auction.deadline.isoformat }}").getTime();
+                        updateCountdown(date, {{ forloop.counter }});
+                    </script>
                 {% endfor %}
             {% else %}
                 <div class="col-md-12 portfolio-item">
