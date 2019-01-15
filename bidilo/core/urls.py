@@ -9,6 +9,7 @@ urlpatterns = [
     path('auctions', views.auctions, name='auctions'),
     path('auctions/create', views.AuctionCreateView.as_view(), name='create_auction'),
     path('auction/<int:auction_id>', views.description, name='description'),
+    path('auction/<int:auction_id>/bid', views.offer_bid, name='bid'),
     path('credit', views.credit, name='credit'),
     path('credit/charge', views.charge_credit, name='charge_credit'),
     path('credit/withdraw', views.withdraw_credit, name='withdraw_credit'),

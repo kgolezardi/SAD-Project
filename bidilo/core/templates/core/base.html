@@ -56,7 +56,24 @@
             </div>
         </nav>
     {% endblock %}
-    {% bootstrap_messages %}
+
+    <!-- Messages -->
+    <div class="fixed-bottom" style="margin: 5px 0">
+        {% for message in messages %}
+            <div id="message-alert{{ forloop.counter }}"
+                 class="{{ message|bootstrap_message_classes }} alert-dismissable fade show"
+                 style="margin: 5px 30px">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>
+
+            <script>
+                setTimeout(function () {
+                    $('#message-alert{{ forloop.counter }}').alert('close');
+                }, 5000)
+            </script>
+        {% endfor %}
+    </div>
 
     {% block content %}
     {% endblock %}

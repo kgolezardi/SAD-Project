@@ -5,7 +5,6 @@
 {% block content %}
     <!-- Page Content -->
     <div class="container">
-
         <!-- Portfolio Item Heading -->
         <h1 class="my-4">Auction
             <small>{{ auction.title }}</small>
@@ -20,15 +19,26 @@
 
             <div class="col-md-4">
                 <h3 class="my-3">Auction Description</h3>
-                <p>{{ auction.description }}asdfadsfafadsfdsafafdasfasf</p>
+                <p>{{ auction.description }}</p>
                 <h3 class="my-3">Base Price</h3>
                 <p>{{ auction.base_price }} Tomans</p>
                 <h3 class="my-3">Highest Bid</h3>
-                <p>{{ auction.base_price }} Tomans</p>
+                {% if auction.highest_bid is None %}
+                    <p class="text-warning">Be the first to bid.</p>
+                {% else %}
+                    <p>
+                        {{ auction.highest_bid.price }} Tomans
+                        {% if auction.highest_bid.owner == user %}
+                             <span class="badge badge-info">YOURS</span>
+                        {% endif %}
+                    </p>
+                {% endif %}
                 <h3 class="my-3">Time till closing</h3>
                 <p><strong id="countdown"></strong></p>
                 <br/>
-                <button class="btn btn-success w-100" id="bid-btn">Bid Now!</button>
+                <button class="btn btn-success w-100" id="bid-btn" data-toggle="modal" data-target="#bidModal">
+                    Bid Now!
+                </button>
             </div>
 
         </div>
@@ -65,6 +75,34 @@
     </div>
     <!-- /.container -->
 
+    <!-- Bid Modal -->
+    <div id="bidModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <form action="{% url 'core:bid' auction.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Offer a higher bid!</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="offer-price">Offer price:</label>
+                            <input type="number" class="form-control" id="offer-price" name="price"
+                                   value="{% if auction.highest_bid is None %}{{ auction.base_price }}{% else %}{{ auction.base_price }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Bid</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Countdown Script -->
     <script type="text/javascript">
         var countdown = document.getElementById('countdown');
         var date = new Date("{{ auction.deadline.isoformat }}").getTime();
