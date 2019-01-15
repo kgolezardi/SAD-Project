@@ -90,16 +90,18 @@
         <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 
         {% if user.is_authenticated %}
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('#profile_popover').popover({
-                    placement: 'bottom',
-                    trigger: 'click',
-                    html: true,
-                    content: '{% include 'core/profile_popover.html' %}'
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#profile_popover').popover({
+                        placement: 'bottom',
+                        trigger: 'click',
+                        html: true,
+                        content: '{% include 'core/profile_popover.html' %}'
+                    });
                 });
-            });
-        </script>
+            </script>
+
+            <!-- FIXME: credit modals -->
         {% endif %}
     {% endblock %}
 {% endblock %}
