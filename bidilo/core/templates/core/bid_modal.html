@@ -1,0 +1,26 @@
+<div id="bidModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <form action="{% url 'core:bid' auction.id %}" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Offer a higher bid!</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="offer-price">Offer price:</label>
+                        <input type="number" class="form-control" id="offer-price" name="price"
+                               value="
+                                       {% if auction.highest_bid is None %}{{ auction.base_price }}{% else %}{{ auction.highest_bid.price }}{% endif %}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Bid</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
