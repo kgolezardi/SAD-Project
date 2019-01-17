@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -23,7 +24,7 @@ def description(request, auction_id):
 def offer_bid(request, auction_id):
     AUCTION_FINISHED_MESSAGE = 'The auction is now finished. You cannot offer bid for finished aucitons.'
     LOW_PRICE_MESSAGE = 'Your price is not high enough. It should be higher than the current highest bid and the ' \
-                        'base price.'
+                        'base price plus the minimum bid increment (%s).' % settings.MIN_INCREMENT_LIMIT
     OWN_AUCTION_MESSAGE = 'You cannot bid on your own auction.'
     SUCCESSFULL_BID_MESSAGE = 'You have successfully bid on this auction.'
     NO_CREDIT_MESSAGE = 'You do not have enough credit in your account. Please charge your credit before offering a ' \
