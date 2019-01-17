@@ -126,4 +126,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CELERY_MAX_RETRIES = None
+CELERY_BROKER_URL = 'amqp://localhost'
+
 MIN_INCREMENT_LIMIT = 5000

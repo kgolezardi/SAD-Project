@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.views import View
 
 from core.forms import AuctionCreateForm
-from core.models import Auction, Bid
+from core.models import Auction
 
 
 def auctions(request):
@@ -34,16 +34,16 @@ def offer_bid(request, auction_id):
     price = int(request.POST.get("price", 0))
 
     if auction.finished:
-        messages.add_message(request, messages.ERROR, AUCTION_FINISHED_MESSAGE)
+        messages.error(request, AUCTION_FINISHED_MESSAGE)
     elif auction.valid_price(price):
-        messages.add_message(request, messages.ERROR, LOW_PRICE_MESSAGE)
+        messages.error(request, LOW_PRICE_MESSAGE)
     elif request.user == auction.owner:
-        messages.add_message(request, messages.ERROR, OWN_AUCTION_MESSAGE)
+        messages.error(request, OWN_AUCTION_MESSAGE)
     elif not request.user.can_pay(price):
-        messages.add_message(request, messages.ERROR, NO_CREDIT_MESSAGE)
+        messages.error(request, NO_CREDIT_MESSAGE)
     else:
         auction.place_bid(request.user, price)
-        messages.add_message(request, messages.SUCCESS, SUCCESSFULL_BID_MESSAGE)
+        messages.success(request, SUCCESSFULL_BID_MESSAGE)
 
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
@@ -59,14 +59,14 @@ def confirm_receipt(request, auction_id):
     highest_bid = auction.highest_bid
 
     if not auction.finished:
-        messages.add_message(request, messages.ERROR, UNFINISHED_MESSAGE)
+        messages.error(request, UNFINISHED_MESSAGE)
     elif highest_bid is None or highest_bid.owner != request.user:
-        messages.add_message(request, messages.ERROR, INVALID_USER_MESSAGE)
+        messages.error(request, INVALID_USER_MESSAGE)
     elif auction.received:
-        messages.add_message(request, messages.ERROR, ALREADY_RECEIVED_MESSAGE)
+        messages.error(request, ALREADY_RECEIVED_MESSAGE)
     else:
         auction.receive()
-        messages.add_message(request, messages.SUCCESS, SUCCESSFULL_RECEIVE_MESSAGE)
+        messages.success(request, SUCCESSFULL_RECEIVE_MESSAGE)
 
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
