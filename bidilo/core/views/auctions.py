@@ -8,6 +8,7 @@ from django.views import View
 
 from core.forms import AuctionCreateForm
 from core.models import Auction
+from core.tasks import finish_auction_time
 
 
 def auctions(request):
@@ -50,6 +51,7 @@ def offer_bid(request, auction_id):
 
 @login_required
 def confirm_receipt(request, auction_id):
+    FINALIZED_MESSAGE = 'The auction is finalized'
     INVALID_USER_MESSAGE = 'You are not the highest bidder.'
     UNFINISHED_MESSAGE = 'The auciton is not finished yet.'
     ALREADY_RECEIVED_MESSAGE = 'The item is already received.'
@@ -64,6 +66,8 @@ def confirm_receipt(request, auction_id):
         messages.error(request, INVALID_USER_MESSAGE)
     elif auction.received:
         messages.error(request, ALREADY_RECEIVED_MESSAGE)
+    elif auction.finalized:
+        messages.error(request, FINALIZED_MESSAGE)
     else:
         auction.receive()
         messages.success(request, SUCCESSFULL_RECEIVE_MESSAGE)
@@ -78,6 +82,7 @@ class AuctionCreateView(View):
         form = AuctionCreateForm(request.POST, owner=request.user)
         if form.is_valid():
             obj = form.save()
+            finish_auction_time.apply_async((obj.id,), eta=obj.deadline)
             return HttpResponseRedirect(reverse("core:description", kwargs={
                 'auction_id': obj.id,
             }))

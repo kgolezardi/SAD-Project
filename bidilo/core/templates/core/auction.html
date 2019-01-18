@@ -43,7 +43,7 @@
                     </button>
                 {% endif %}
 
-                {% if auction.finished %}
+                {% if auction.finished and not auction.finalized %}
                     {% if auction.owner == user %}
                         {% if auction.received %}
                             <p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
@@ -137,6 +137,7 @@
         var countdown = document.getElementById('countdown');
         var date = new Date("{{ auction.deadline.isoformat }}").getTime();
         var x = setInterval(updateCountdown, 1000);
+        var done = false;
         updateCountdown();
 
         function updateCountdown() {
@@ -155,7 +156,11 @@
                 var bidBtn = document.getElementById('bid-btn');
                 if (bidBtn)
                     bidBtn.disabled = true;
+                if (done)
+                    window.location = window.location;
             }
+            else
+                done = true;
         }
     </script>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% if auction.finished %}
+{% if auction.finished and not auction.finalized %}
     <div id="contactModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->

@@ -127,8 +127,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Celery settings
 CELERY_MAX_RETRIES = None
 CELERY_BROKER_URL = 'amqp://localhost'
 
+# General settings
+from datetime import timedelta
+
 MIN_INCREMENT_LIMIT = 5000
-MIN_AUCTION_DAYS = 2
+MIN_AUCTION_TIME = timedelta(days=2)
+AUCTION_PAYBACK_TIME = timedelta(days=10).seconds
