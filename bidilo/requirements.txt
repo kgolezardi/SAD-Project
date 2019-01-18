@@ -1,3 +1,4 @@
 Django==2.1.4
 django-bootstrap4==0.0.7
 celery==4.2.1
+django-bootstrap-datepicker-plus==3.0.5

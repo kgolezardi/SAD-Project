@@ -1,6 +1,10 @@
+from datetime import timedelta
+
 from django import forms
 from bootstrap_datepicker_plus import DateTimePickerInput
-
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from core.models import Auction
 
@@ -14,6 +18,14 @@ class AuctionCreateForm(forms.ModelForm):
         model = Auction
         fields = ['title', 'short_description', 'description', 'base_price', 'deadline']
         widgets = {'deadline': DateTimePickerInput}
+
+    def clean_deadline(self):
+        data = self.cleaned_data['deadline']
+
+        if data < timezone.now() + timedelta(days=settings.MIN_AUCTION_DAYS):
+            raise ValidationError('The finish date should be some time after %d days from now' % settings.MIN_AUCTION_DAYS)
+
+        return data
 
     def save(self, commit=True):
         auction = super().save(commit=False)
