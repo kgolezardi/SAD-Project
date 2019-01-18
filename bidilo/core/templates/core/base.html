@@ -19,6 +19,9 @@
         {% endblock %}
 
         {% block head_js %}
+            <script src="{% static 'jquery/js/jquery.min.js' %}"></script>
+            <script src="{% static 'popper.js/js/popper.min.js' %}"></script>
+            <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
         {% endblock %}
 
         {% block head_meta %}
@@ -85,10 +88,6 @@
     {% endblock %}
 
     {% block foot_js %}
-        <script src="{% static 'jquery/js/jquery.min.js' %}"></script>
-        <script src="{% static 'popper.js/js/popper.min.js' %}"></script>
-        <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-
         {% if user.is_authenticated %}
             <script type="text/javascript">
                 $(document).ready(function () {

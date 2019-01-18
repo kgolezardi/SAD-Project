@@ -1,4 +1,6 @@
 from django import forms
+from bootstrap_datepicker_plus import DateTimePickerInput
+
 
 from core.models import Auction
 
@@ -11,6 +13,7 @@ class AuctionCreateForm(forms.ModelForm):
     class Meta:
         model = Auction
         fields = ['title', 'short_description', 'description', 'base_price', 'deadline']
+        widgets = {'deadline': DateTimePickerInput}
 
     def save(self, commit=True):
         auction = super().save(commit=False)
