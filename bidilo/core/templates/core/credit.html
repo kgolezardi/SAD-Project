@@ -1,20 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My Credit</title>
-</head>
-<body>
-    <p>
-        Current Credit: {{ user.credit }}
-    </p>
-    <ul>
-        <li>
-            <a href="{% url 'core:charge_credit' %}">Charge</a>
-        </li>
-        <li>
-            <a href="{% url 'core:withdraw_credit' %}">Withdraw</a>
-        </li>
-    </ul>
-</body>
-</html>
+{% extends "core/base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+    <div class="container">
+
+        <h1 class="my-4">Current Credit:
+            <small>{{ user.credit }}</small>
+        </h1>
+
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-success btn-block" id="charge-btn" data-toggle="modal" data-target="#chargeModal">Charge</button>
+            </div>
+            <div class="col">
+                <button class="btn btn-success btn-block" id="charge-btn" data-toggle="modal" data-target="#withdrawModal">Withdraw</button>
+            </div>
+        </div>
+
+    </div>
+    {% include 'core/charge_credit_modal.html' %}
+    {% include 'core/withdraw_credit_modal.html' %}
+{% endblock %}
