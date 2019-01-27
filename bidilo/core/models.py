@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 from accounts.models import User
+from notifications.models import Notification
 
 
 class Auction(models.Model):
@@ -29,18 +30,27 @@ class Auction(models.Model):
         return self.deadline < timezone.now()
 
     def finish(self):
-        # TODO: send notification
-        pass
+        # FIXME: specify which auction
+        Notification.objects.create(user=self.owner,
+                                    content='Your auction is now finished. You can go to your '
+                                            'auction page to see the contact information for the '
+                                            'highest bidder. You have 10 days to send the item to '
+                                            'him/her.')
+        # FIXME: send notification to highest bidder
 
     def finalize(self):
         if self.finalized:
             return
         highest_bid = self.highest_bid
-        if self.highest_bid is None:
-            # TODO: send notificaiton
-            pass
-        else:
-            # TODO: send notificaiton
+        if self.highest_bid is not None:
+            # FIXME: specify which auction
+            Notification.objects.create(user=self.owner,
+                                        content='You didn\'t send the item to the highest bidder in the valid time '
+                                                'window. Your auction is now finalized.')
+            Notification.objects.create(user=highest_bid.owner,
+                                        content='Unfortunately the auction owner didn\'t send the item in time. Your '
+                                                'reserved money is now available for you to use it in other '
+                                                'transactions.')
             highest_bid.owner.release_credit(highest_bid.price)
         self.finalized = True
         self.save()
@@ -48,7 +58,11 @@ class Auction(models.Model):
     def receive(self):
         highest_bid = self.highest_bid
         highest_bid.owner.pay(highest_bid.price)
-        # TODO: send notification
+        # FIXME: specify which auction
+        Notification.objects.create(user=self.owner,
+                                    content='Your item has been received.')
+        Notification.objects.create(user=highest_bid.owner,
+                                    content='Congratulations on your new item!')
         self.owner.charge_credit(highest_bid.price)
         self.received = True
         self.finalized = True
@@ -69,7 +83,9 @@ class Auction(models.Model):
         highest_bid = self.highest_bid
         if highest_bid is not None:
             highest_bid.owner.release_credit(highest_bid.price)
-            # TODO: send notification
+            # FIXME: specify which auction
+            Notification.objects.create(user=self.owner,
+                                        content='Someone just placed a higher bid on your item')
         user.reserve_credit(price)
         bid = Bid(owner=user, auction=self, price=price)
         bid.save()

@@ -1,0 +1,54 @@
+{% extends "core/base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">Notifications</h1>
+        <div class="row">
+            {% if notifs %}
+                <table class="table table-striped table-hover table-">
+                    <thead>
+                    <tr>
+                        <th>Op</th>
+                        <th>Text</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for notif in notifs %}
+                        <tr>
+                            <td>
+                                {% if notif.read == True %}
+                                    <a href="{% url 'notifications:unread_notif' notif.id %}">Unread</a>
+                                {% else %}
+                                    <a href="{% url 'notifications:read_notif' notif.id %}">Read</a>
+                                {% endif %}
+                            </td>
+                            <td><span id="notif{{ forloop.counter }}"
+                                      style="font-weight: {% if notif.read == True %} normal {% else %} bold {% endif %};">
+                                {{ notif.content }}
+                            </span></td>
+                            <td><span class="text-center">
+                                {{ notif.date|date:"l, d M Y" }} <br/>
+                                {{ notif.date|date:"g:i A" }}
+                            </span></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <h5 class="my-4">You have no notifications till now.</h5>
+            {% endif %}
+
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Ajax Script -->
+    <script type="text/javascript">
+
+    </script>
+{% endblock %}
