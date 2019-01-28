@@ -79,12 +79,16 @@
             $('#notif-unread' + notif_id).removeClass('d-none');
             $('#notif-read' + notif_id).addClass('d-none');
             $('#notif-text' + notif_id).removeClass('font-weight-bold');
+            var nc = $('#notif-count');
+            nc.html(parseInt(nc.html(), 10) - 1)
         }
 
         function unread_notif(notif_id) {
             $('#notif-read' + notif_id).removeClass('d-none');
             $('#notif-unread' + notif_id).addClass('d-none');
             $('#notif-text' + notif_id).addClass('font-weight-bold');
+            var nc = $('#notif-count');
+            nc.html(parseInt(nc.html(), 10) + 1)
         }
     </script>
 {% endblock %}
