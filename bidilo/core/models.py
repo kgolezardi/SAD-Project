@@ -30,27 +30,29 @@ class Auction(models.Model):
         return self.deadline < timezone.now()
 
     def finish(self):
-        # FIXME: specify which auction
         Notification.objects.create(user=self.owner,
-                                    content='Your auction is now finished. You can go to your '
-                                            'auction page to see the contact information for the '
-                                            'highest bidder. You have 10 days to send the item to '
-                                            'him/her.')
-        # FIXME: send notification to highest bidder
+                                    content="Your auction '%s' is now finished. You can go to its page to see the "
+                                            "contact information for the highest bidder. You have %d days to send the "
+                                            "item to him/her." % (self.title, settings.AUCTION_PAYBACK_TIME.days))
+        highest_bid = self.highest_bid
+        if highest_bid is not None:
+            Notification.objects.create(user=highest_bid.owner,
+                                        content="The auction '%s' in which you have the highest bid is now finished. "
+                                                "The owner is supposed to give you the item in %d days from now."
+                                                % (self.title, settings.AUCTION_PAYBACK_TIME.days))
 
     def finalize(self):
         if self.finalized:
             return
         highest_bid = self.highest_bid
         if self.highest_bid is not None:
-            # FIXME: specify which auction
             Notification.objects.create(user=self.owner,
-                                        content='You didn\'t send the item to the highest bidder in the valid time '
-                                                'window. Your auction is now finalized.')
+                                        content="You didn't send the item '%s' to the highest bidder in time window "
+                                                "you were supposed to. Your auction is now finalized." % self.title)
             Notification.objects.create(user=highest_bid.owner,
-                                        content='Unfortunately the auction owner didn\'t send the item in time. Your '
-                                                'reserved money is now available for you to use it in other '
-                                                'transactions.')
+                                        content="Unfortunately the owner of the auction '%s' didn't send the item in "
+                                                "time. Your reserved money is now available for you to use it in other "
+                                                "transactions." % self.title)
             highest_bid.owner.release_credit(highest_bid.price)
         self.finalized = True
         self.save()
@@ -58,11 +60,10 @@ class Auction(models.Model):
     def receive(self):
         highest_bid = self.highest_bid
         highest_bid.owner.pay(highest_bid.price)
-        # FIXME: specify which auction
         Notification.objects.create(user=self.owner,
-                                    content='Your item has been received.')
+                                    content="Your item '%s' has been received by the new owner." % self.title)
         Notification.objects.create(user=highest_bid.owner,
-                                    content='Congratulations on your new item!')
+                                    content="Congratulations on your new item '%s'!" % self.title)
         self.owner.charge_credit(highest_bid.price)
         self.received = True
         self.finalized = True
@@ -82,10 +83,12 @@ class Auction(models.Model):
         # TODO: atomic
         highest_bid = self.highest_bid
         if highest_bid is not None:
+            Notification.objects.create(user=highest_bid.owner,
+                                        content="Someone just placed a higher bid than yours for item '%s'"
+                                                % self.title)
             highest_bid.owner.release_credit(highest_bid.price)
-            # FIXME: specify which auction
-            Notification.objects.create(user=self.owner,
-                                        content='Someone just placed a higher bid on your item')
+        Notification.objects.create(user=self.owner,
+                                    content="Someone just placed a bid on your item '%s'" % self.title)
         user.reserve_credit(price)
         bid = Bid(owner=user, auction=self, price=price)
         bid.save()

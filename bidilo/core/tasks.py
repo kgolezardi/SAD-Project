@@ -8,7 +8,7 @@ from core.models import Auction
 def finish_auction_time(auction_id):
     auction = Auction.objects.get(id=auction_id)
     auction.finish()
-    finalize_auction.apply_async((auction_id,), countdown=settings.AUCTION_PAYBACK_TIME)
+    finalize_auction.apply_async((auction_id,), countdown=settings.AUCTION_PAYBACK_TIME.seconds)
 
 
 @shared_task

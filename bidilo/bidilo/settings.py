@@ -137,4 +137,4 @@ from datetime import timedelta
 
 MIN_INCREMENT_LIMIT = 5000
 MIN_AUCTION_TIME = timedelta(days=2)
-AUCTION_PAYBACK_TIME = timedelta(days=10).seconds
+AUCTION_PAYBACK_TIME = timedelta(days=10)
