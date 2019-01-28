@@ -30,5 +30,9 @@ class User(AbstractUser):
         self.credit -= price
         self.save()
 
+    @property
+    def available_credit(self):
+        return self.credit - self.reserved_credit
+
     def __str__(self):
         return self.username
