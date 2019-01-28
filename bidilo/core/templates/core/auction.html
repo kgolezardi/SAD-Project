@@ -43,20 +43,20 @@
                     </button>
                 {% endif %}
 
-                {% if auction.finished and not auction.finalized %}
+                {% if auction.finished %}
                     {% if auction.owner == user %}
                         {% if auction.received %}
                             <p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
-                        {% else %}
+                        {% elif not auction.finalized %}
                             <button class="btn btn-primary btn-block" id="contact-btn" data-toggle="modal"
                                     data-target="#contactModal">
                                 Get Highest Bidder Contact Info
                             </button>
                         {% endif %}
-                    {% elif not auction.highest_bid is None and auction.highest_bid.owner == user %}
+                    {% elif auction.highest_bid is not None and auction.highest_bid.owner == user %}
                         {% if auction.received %}
                             <br/><p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
-                        {% else %}
+                        {% elif not auction.finalized %}
                             <button class="btn btn-info btn-block" id="receipt-btn" data-toggle="modal"
                                     data-target="#receiptModal">
                                 Conform Receipt of The Item
