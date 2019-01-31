@@ -28,7 +28,7 @@
                 {% else %}
                     <p>
                         {{ auction.highest_bid.price }} Tomans
-                        {% if auction.highest_bid.owner == user %}
+                        {% if auction.highest_bid.owner.user == user %}
                              <span class="badge badge-info">YOURS</span>
                         {% endif %}
                     </p>
@@ -37,14 +37,14 @@
                 <p><strong id="countdown"></strong></p>
                 <br/>
 
-                {% if not auction.owner == user %}
+                {% if not auction.owner.user == user %}
                     <button class="btn btn-success btn-block" id="bid-btn" data-toggle="modal" data-target="#bidModal">
                         Bid Now!
                     </button>
                 {% endif %}
 
                 {% if auction.finished %}
-                    {% if auction.owner == user %}
+                    {% if auction.owner.user == user %}
                         {% if auction.received %}
                             <p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
                         {% elif not auction.finalized %}
@@ -53,7 +53,7 @@
                                 Get Highest Bidder Contact Info
                             </button>
                         {% endif %}
-                    {% elif auction.highest_bid is not None and auction.highest_bid.owner == user %}
+                    {% elif auction.highest_bid is not None and auction.highest_bid.owner.user == user %}
                         {% if auction.received %}
                             <br/><p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
                         {% elif not auction.finalized %}
@@ -110,7 +110,7 @@
                 {% for bid in auction.bid_set.all reversed %}
                     <tr>
                         <td>{{ forloop.revcounter }}</td>
-                        <td>{{ bid.owner.username }}</td>
+                        <td>{{ bid.owner.user.username }}</td>
                         <td>{{ bid.price }}</td>
                         <td>{{ bid.date|date:"l, d M Y, g:i A" }}</td>
                     </tr>

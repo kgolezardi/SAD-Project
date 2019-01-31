@@ -33,17 +33,18 @@ def offer_bid(request, auction_id):
 
     auction = get_object_or_404(Auction, id=auction_id)
     price = int(request.POST.get("price", 0))
+    customer = request.user.customer
 
     if auction.finished:
         messages.error(request, AUCTION_FINISHED_MESSAGE)
     elif auction.valid_price(price):
         messages.error(request, LOW_PRICE_MESSAGE)
-    elif request.user == auction.owner:
+    elif customer == auction.owner:
         messages.error(request, OWN_AUCTION_MESSAGE)
-    elif not request.user.can_pay(price):
+    elif not customer.can_pay(price):
         messages.error(request, NO_CREDIT_MESSAGE)
     else:
-        auction.place_bid(request.user, price)
+        auction.place_bid(customer, price)
         messages.success(request, SUCCESSFULL_BID_MESSAGE)
 
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
@@ -59,10 +60,11 @@ def confirm_receipt(request, auction_id):
 
     auction = get_object_or_404(Auction, id=auction_id)
     highest_bid = auction.highest_bid
+    customer = request.user.customer
 
     if not auction.finished:
         messages.error(request, UNFINISHED_MESSAGE)
-    elif highest_bid is None or highest_bid.owner != request.user:
+    elif highest_bid is None or highest_bid.owner != customer:
         messages.error(request, INVALID_USER_MESSAGE)
     elif auction.received:
         messages.error(request, ALREADY_RECEIVED_MESSAGE)
@@ -79,7 +81,7 @@ class AuctionCreateView(View):
     template_name = "core/create_auction.html"
 
     def post(self, request):
-        form = AuctionCreateForm(request.POST, owner=request.user)
+        form = AuctionCreateForm(request.POST, owner=request.user.customer)
         if form.is_valid():
             obj = form.save()
             finish_auction_time.apply_async((obj.id,), eta=obj.deadline)
@@ -90,5 +92,5 @@ class AuctionCreateView(View):
         return render(request, self.template_name, context={"form": form})
 
     def get(self, request):
-        form = AuctionCreateForm(owner=request.user)
+        form = AuctionCreateForm(owner=request.user.customer)
         return render(request, self.template_name, context={"form": form})

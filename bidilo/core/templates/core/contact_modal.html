@@ -11,10 +11,10 @@
                     {% if auction.highest_bid is None %}
                         Unfotunatly, no one has made a bid on your item.
                     {% else %}
-                        <p><strong>Name: </strong>{{ auction.highest_bid.owner.name }}</p>
-                        <p><strong>Email: </strong>{{ auction.highest_bid.owner.email }}</p>
-                        <p><strong>Address: </strong>{{ auction.highest_bid.owner.address }}</p>
-                        <p><strong>Phone Number: </strong>{{ auction.highest_bid.owner.phone_number }}</p>
+                        <p><strong>Name: </strong>{{ auction.highest_bid.owner.user.name }}</p>
+                        <p><strong>Email: </strong>{{ auction.highest_bid.owner.user.email }}</p>
+                        <p><strong>Address: </strong>{{ auction.highest_bid.owner.user.address }}</p>
+                        <p><strong>Phone Number: </strong>{{ auction.highest_bid.owner.user.phone_number }}</p>
                     {% endif %}
                 </div>
                 <div class="modal-footer">

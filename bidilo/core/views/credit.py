@@ -16,25 +16,25 @@ def credit(request):
 
 @login_required
 def charge_credit(request):
-    user = request.user
+    customer = request.user.customer
     if request.method == 'POST':
         form = ChargeCreditForm(request.POST)
         if form.is_valid():
-            user.credit += form.cleaned_data['charge_amount']
-            user.save()
+            customer.credit += form.cleaned_data['charge_amount']
+            customer.save()
     return HttpResponseRedirect(reverse('core:credit'))
 
 
 @login_required
 def withdraw_credit(request):
-    user = request.user
+    customer = request.user.customer
     if request.method == 'POST':
         form = WithdrawCreditForm(request.POST)
         if form.is_valid():
             withdraw_amount = form.cleaned_data['withdraw_amount']
-            if withdraw_amount <= user.credit:
-                user.credit -= withdraw_amount
-                user.save()
+            if withdraw_amount <= customer.credit:
+                customer.credit -= withdraw_amount
+                customer.save()
             else:
                 messages.error(request, "You can't withdraw more than your current credit.")
     return HttpResponseRedirect(reverse('core:credit'))

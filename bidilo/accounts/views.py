@@ -1,12 +1,12 @@
 from django.urls import reverse_lazy
 from django.views import generic
 
-from accounts.forms import CustomUserCreationForm
+from accounts.forms import CustomerCreationForm
 from accounts.models import User
 
 
-class SignUpView(generic.CreateView):
-    form_class = CustomUserCreationForm
+class CustomerSignUpView(generic.CreateView):
+    form_class = CustomerCreationForm
     success_url = reverse_lazy('accounts:login')
     template_name = 'registration/signup.html'
 
