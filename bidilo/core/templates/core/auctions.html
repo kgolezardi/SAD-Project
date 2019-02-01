@@ -43,7 +43,7 @@
                 {% for auction in auction_list %}
                     <div class="col-md-4 portfolio-item">
                         <div class="card h-100">
-                            <a href="{% url 'core:description' auction.id %}"><img class="card-img-top" src="http://placehold.it/700x400" alt=""></a>
+                            <a href="{% url 'core:description' auction.id %}"><img class="card-img-top" src="{{ auction.picture.url }}" alt=""></a>
                             <div class="card-body">
                                 <h4 class="card-title">
                                     <a href="{% url 'core:description' auction.id %}">{{ auction.title }}</a>

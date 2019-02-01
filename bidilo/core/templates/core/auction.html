@@ -72,26 +72,26 @@
         <h3 class="my-4">Other Images</h3>
 
         <div class="row">
-            <div class="col-md-3 mb-4">
-                <a href="#">
-                    <img class="img-fluid" src="http://placehold.it/500x300" alt="">
-                </a>
-            </div>
-            <div class="col-md-3 mb-4">
-                <a href="#">
-                    <img class="img-fluid" src="http://placehold.it/500x300" alt="">
-                </a>
-            </div>
-            <div class="col-md-3 mb-4">
-                <a href="#">
-                    <img class="img-fluid" src="http://placehold.it/500x300" alt="">
-                </a>
-            </div>
-            <div class="col-md-3 mb-4">
-                <a href="#">
-                    <img class="img-fluid" src="http://placehold.it/500x300" alt="">
-                </a>
-            </div>
+            {% for image in auction.auctionimage_set.all %}
+                <div class="col-md-3 mb-4">
+                    <a href="javascript:" data-toggle="modal" data-target="#imageModal{{ forloop.counter }}">
+                        <img class="img-fluid" width="100%" style="object-fit: cover;" src="{{ image.file.url }}" alt="">
+                    </a>
+                    <!-- Image Modal -->
+                    <div id="imageModal{{ forloop.counter }}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <img class="img-fluid" width="100%" style="object-fit: cover;" src="{{ image.file.url }}" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% if auction.auctionimage_set.all|length == 0 %}
+                <div class="col-md-12 mb-12">No more images for this auction.</div>
+            {% endif %}
         </div>
         <!-- /.row -->
 

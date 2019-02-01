@@ -12,7 +12,7 @@ from notifications.models import Notification
 
 
 def auction_picture_validator(image):
-    if image.file.size > settings.AUCTION_IMAGE_LIMIT_MB * 1024 * 1024:
+    if image.size > settings.AUCTION_IMAGE_LIMIT_MB * 1024 * 1024:
         raise ValidationError("Images have size limit of %d megabytes" % settings.AUCTION_IMAGE_LIMIT_MB)
     width, height = get_image_dimensions(image)
     ratio = width / height
@@ -112,6 +112,11 @@ class Auction(models.Model):
         customer.reserve_credit(price)
         bid = Bid(owner=customer, auction=self, price=price)
         bid.save()
+
+
+class AuctionImage(models.Model):
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    file = models.ImageField(upload_to=get_image_filename, validators=[auction_picture_validator])
 
 
 class Bid(models.Model):
