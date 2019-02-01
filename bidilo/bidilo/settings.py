@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.count',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -129,6 +130,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Celery settings
 CELERY_MAX_RETRIES = None
 CELERY_BROKER_URL = 'amqp://localhost'
@@ -139,3 +143,5 @@ from datetime import timedelta
 MIN_INCREMENT_LIMIT = 5000
 MIN_AUCTION_TIME = timedelta(days=2)
 AUCTION_PAYBACK_TIME = timedelta(days=10)
+
+AUCTION_IMAGE_LIMIT_MB = 5

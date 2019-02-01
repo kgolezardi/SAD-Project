@@ -14,7 +14,7 @@ class AuctionCreateForm(forms.ModelForm):
 
     class Meta:
         model = Auction
-        fields = ['title', 'short_description', 'description', 'base_price', 'deadline']
+        fields = ['title', 'short_description', 'description', 'base_price', 'deadline', 'picture']
         widgets = {'deadline': DateTimePickerInput}
 
     def clean_deadline(self):
@@ -22,6 +22,11 @@ class AuctionCreateForm(forms.ModelForm):
         if data < timezone.now() + settings.MIN_AUCTION_TIME:
             raise ValidationError('The finish date should be some time after %d days from now'
                                   % settings.MIN_AUCTION_TIME.days)
+        return data
+
+    def clean_picture(self):
+        data = self.cleaned_data['picture']
+        print(data.size)
         return data
 
     def save(self, commit=True):

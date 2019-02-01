@@ -18,7 +18,6 @@ def show_notifs(request):
 def read_notif(request):
     notif_id = request.POST.get('notif_id', -1)
     notification = get_object_or_404(Notification, id=notif_id)
-    print(request.user)
     if notification.user != request.user:
         return HttpResponseForbidden()
     notification.set_read()

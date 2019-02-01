@@ -9,7 +9,7 @@
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
             <h1 class="my-4">Create new auction</h1>
-            <form class="form-horizontal" method="post">
+            <form class="form-horizontal" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 {% buttons %}

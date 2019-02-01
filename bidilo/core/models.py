@@ -1,4 +1,9 @@
+import os
+from uuid import uuid4
+
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.files.images import get_image_dimensions
 from django.db import models
 from django.utils import timezone
 
@@ -6,13 +11,28 @@ from accounts.models import User, Customer
 from notifications.models import Notification
 
 
+def auction_picture_validator(image):
+    if image.file.size > settings.AUCTION_IMAGE_LIMIT_MB * 1024 * 1024:
+        raise ValidationError("Images have size limit of %d megabytes" % settings.AUCTION_IMAGE_LIMIT_MB)
+    width, height = get_image_dimensions(image)
+    ratio = width / height
+    if ratio < 1 or ratio > 1.75:
+        raise ValidationError("Ratio of the images should be between 1 and 1.75")
+
+
+def get_image_filename(instance, filename):
+    return os.path.join('auction_images', '%s.jpg' % uuid4().hex)
+
+
 class Auction(models.Model):
     title = models.CharField(max_length=50)
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    short_description = models.TextField(max_length=500, help_text='Enter a brief description of your item to show'
+    short_description = models.TextField(max_length=500, help_text='Enter a brief description of the item to show'
                                                                    'in the auctions list')
-    description = models.TextField(max_length=1000, help_text='Enter a more detailed description of your item')
+    description = models.TextField(max_length=1000, help_text='Enter a more detailed description of the item')
     pub_date = models.DateTimeField(verbose_name='Publication date')
+    picture = models.ImageField(upload_to=get_image_filename, validators=[auction_picture_validator],
+                                help_text='The main image for the auction')
     base_price = models.PositiveIntegerField(default=10000, help_text='Base price in Tomans')
     deadline = models.DateTimeField(verbose_name='Finish date')
     received = models.BooleanField(default=False)

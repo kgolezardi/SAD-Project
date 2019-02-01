@@ -81,7 +81,7 @@ class AuctionCreateView(View):
     template_name = "core/create_auction.html"
 
     def post(self, request):
-        form = AuctionCreateForm(request.POST, owner=request.user.customer)
+        form = AuctionCreateForm(request.POST, request.FILES, owner=request.user.customer)
         if form.is_valid():
             obj = form.save()
             finish_auction_time.apply_async((obj.id,), eta=obj.deadline)

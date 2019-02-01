@@ -14,7 +14,7 @@
         <div class="row">
 
             <div class="col-md-8">
-                <img class="img-fluid" src="http://placehold.it/750x500" alt="">
+                <img class="img-fluid w-100 h-auto" src="{{ auction.picture.url }}" alt="">
             </div>
 
             <div class="col-md-4">
@@ -130,7 +130,9 @@
     {% include 'core/receipt_modal.html' %}
 
     <!-- Contact Modal -->
-    {% include 'core/contact_modal.html' %}
+    {% if auction.finished and not auction.finalized %}
+        {% include 'core/contact_modal.html' %}
+    {% endif %}
 
     <!-- Countdown Script -->
     <script type="text/javascript">

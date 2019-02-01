@@ -12,6 +12,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     credit = models.PositiveIntegerField(default=0)
@@ -41,6 +42,7 @@ class Customer(models.Model):
     @property
     def available_credit(self):
         return self.credit - self.reserved_credit
+
 
 class Supervisor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
