@@ -19,13 +19,13 @@
                     {% for notif in notifs %}
                         <tr>
                             <td class="text-center">
-                                <a href="javascript:;" onclick="send_ajax({{ notif.id }}, false)"
+                                <a href="javascript:" onclick="send_ajax({{ notif.id }}, false)"
                                    id="notif-unread{{ notif.id }}"
-                                   class="fa fa-circle-o text-danger {% if notif.read == False %}d-none{% endif %}">
+                                   class="fa fa-circle-o text-success {% if notif.read == False %}d-none{% endif %}">
                                 </a>
-                                <a href="javascript:;" onclick="send_ajax({{ notif.id }}, true)"
+                                <a href="javascript:" onclick="send_ajax({{ notif.id }}, true)"
                                    id="notif-read{{ notif.id }}"
-                                   class="fa fa-dot-circle-o text-success {% if notif.read == True %}d-none{% endif %}">
+                                   class="fa fa-dot-circle-o text-danger {% if notif.read == True %}d-none{% endif %}">
                                 </a>
                             </td>
                             <td><span id="notif-text{{ notif.id }}"
