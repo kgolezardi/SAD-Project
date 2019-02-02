@@ -96,7 +96,7 @@ class Auction(models.Model):
         return super().save(*args, **kwargs)
 
     def valid_price(self, price):
-        return price < self.base_price + settings.MIN_INCREMENT_LIMIT or \
+        return price < self.base_price or \
                self.highest_bid is not None and price < self.highest_bid.price + settings.MIN_INCREMENT_LIMIT
 
     def place_bid(self, customer, price):
