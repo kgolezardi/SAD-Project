@@ -2,26 +2,57 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 
 from core.errors import AuctionFinishedError, PriceValidationError, UserAccessError, LowCreditError, \
-    AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError
+    AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError, AuctionStateError
 from core.forms import AuctionCreateForm
 from core.models import Auction
 from core.tasks import finish_auction_time
 
 
 def auctions(request):
-    auction_list = Auction.objects.filter()
+    auction_list = Auction.objects.filter(state=Auction.APPROVED)
     return render(request, 'core/auctions.html', {'auction_list': auction_list})
 
 
 def description(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
+    user = request.user
+    if auction.state != Auction.APPROVED:
+        if not user.is_authenticated or user.is_customer and auction.owner.user != user:
+            raise Http404
     return render(request, 'core/auction.html', {'auction': auction})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_supervisor)
+def pending_auctions(request):
+    auction_list = Auction.objects.filter(state=Auction.PENDING)
+    return render(request, 'core/auctions.html', {'auction_list': auction_list,
+                                                  'pending': True})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_supervisor)
+def approve_auction(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    if auction.state == Auction.PENDING:
+        auction.approve()
+    return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_supervisor)
+def reject_auction(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    if auction.state == Auction.PENDING:
+        auction.reject()
+    return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 
 # FIXME: transactions
@@ -52,6 +83,8 @@ def offer_bid(request, auction_id):
     try:
         auction.place_bid(customer, price)
         messages.success(request, SUCCESSFULL_BID_MESSAGE)
+    except AuctionStateError:
+        raise Http404
     except AuctionFinishedError:
         messages.error(request, AUCTION_FINISHED_MESSAGE)
     except PriceValidationError:
@@ -79,6 +112,8 @@ def confirm_receipt(request, auction_id):
     try:
         auction.receive(customer)
         messages.success(request, SUCCESSFULL_RECEIVE_MESSAGE)
+    except AuctionStateError:
+        raise Http404
     except AuctionNotFinishedError:
         messages.error(request, UNFINISHED_MESSAGE)
     except UserAccessError:

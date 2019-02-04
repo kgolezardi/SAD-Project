@@ -6,9 +6,60 @@
     <!-- Page Content -->
     <div class="container">
         <!-- Portfolio Item Heading -->
-        <h1 class="my-4">Auction
-            <small>{{ auction.title }}</small>
-        </h1>
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="my-4">Auction
+                    <small>
+                        {{ auction.title }}
+                        {% if user.is_authenticated and user.is_supervisor and auction.state == auction.APPROVED %}
+                            <span class="fa fa-info-circle"></span>: 0
+                        {% endif %}
+                    </small>
+                </h1>
+            </div>
+            <div class="col-md-6 text-right my-4">
+                {% if user.is_authenticated and user.is_supervisor %}
+                    {% if auction.state == auction.PENDING %}
+                        <small class="text-warning">(Pending)</small>
+                        <a href="{% url 'core:approve' auction.id %}" class="btn btn-success">
+                            <span class="fa fa-thumbs-up"></span>
+                        </a>
+                        <a href="{% url 'core:reject' auction.id %}" class="btn btn-danger">
+                            <span class="fa fa-thumbs-down"></span>
+                        </a>
+                    {% elif auction.state == auction.APPROVED %}
+                        <small class="text-success">(Approved)</small>
+                        <a href="{% url 'core:pending' %}" class="btn btn-danger">
+                            <span class="fa fa-trash"></span>
+                        </a>
+                    {% elif auction.state == auction.REJECTED %}
+                        <small class="text-danger">(Rejected)</small>
+                    {% endif %}
+
+                {% endif %}
+                {% if user.is_authenticated and user.is_customer %}
+                    {% if auction.owner.user == user %}
+                        {% if auction.state == auction.PENDING %}
+                            <small class="text-warning">(Pending)</small>
+                            <a href="{% url 'core:auctions' %}" class="btn btn-warning">
+                                <span class="fa fa-edit"></span>
+                            </a>
+                            <a href="{% url 'core:pending' %}" class="btn btn-danger">
+                                <span class="fa fa-trash"></span>
+                            </a>
+                        {% elif auction.state == auction.APPROVED %}
+                            <small class="text-success">(Approved)</small>
+                        {% elif auction.state == auction.REJECTED %}
+                            <small class="text-danger">(Rejected)</small>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'core:pending' %}" class="btn btn-info">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
 
         <!-- Portfolio Item Row -->
         <div class="row">
@@ -37,13 +88,16 @@
                 <p><strong id="countdown"></strong></p>
                 <br/>
 
-                {% if not auction.owner.user == user %}
-                    <button class="btn btn-success btn-block" id="bid-btn" data-toggle="modal" data-target="#bidModal">
-                        Bid Now!
-                    </button>
+                {% if not user.is_authenticated or not user.is_supervisor %}
+                    {% if not auction.owner.user == user %}
+                        <button class="btn btn-success btn-block" id="bid-btn" data-toggle="modal"
+                                data-target="#bidModal">
+                            Bid Now!
+                        </button>
+                    {% endif %}
                 {% endif %}
 
-                {% if auction.finished %}
+                {% if auction.finished and auction.state == auction.APPROVED %}
                     {% if auction.owner.user == user %}
                         {% if auction.received %}
                             <p class="text-success">Received at {{ auction.receive_date|date:"d M Y, g:i A" }}</p>
@@ -130,7 +184,7 @@
     {% include 'core/receipt_modal.html' %}
 
     <!-- Contact Modal -->
-    {% if auction.finished and not auction.finalized %}
+    {% if auction.finished and auction.state == auction.APPROVED and not auction.finalized %}
         {% include 'core/contact_modal.html' %}
     {% endif %}
 

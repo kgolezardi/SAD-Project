@@ -9,11 +9,19 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-md-6">
-                <h1 class="my-4">Availabe Auctions</h1>
+                {% if pending %}
+                    <h1 class="my-4">Pending Auctions</h1>
+                {% else %}
+                    <h1 class="my-4">Availabe Auctions</h1>
+                {% endif %}
             </div>
             <div class="col-md-6 text-right my-4">
                 {% if user.is_authenticated and user.is_supervisor %}
-                    <a href="{% url 'core:auctions' %}" class="btn btn-dark">Pending</a>
+                    {% if pending %}
+                        <a href="{% url 'core:auctions' %}" class="btn btn-info">Available</a>
+                    {% else %}
+                        <a href="{% url 'core:pending' %}" class="btn btn-dark">Pending</a>
+                    {% endif %}
                 {% endif %}
                 {% if user.is_authenticated and user.is_customer %}
                     <a href="{% url 'core:auctions' %}" class="btn btn-dark">My Acutions</a>

@@ -24,3 +24,7 @@ class AuctionReceivedError(Exception):
 
 class AuctionFinalizedError(Exception):
     pass
+
+
+class AuctionStateError(Exception):
+    pass

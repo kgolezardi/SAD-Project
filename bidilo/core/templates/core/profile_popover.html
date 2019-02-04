@@ -8,9 +8,5 @@
                     href="{% url 'core:charge_credit' %}" class="text-warning mr-2"><span class="fa fa-money"></span></a>
             </p>
         {% endif %}
-        {# TODO: handle supervisor #}
-        {% if user.is_supervisor %}
-            <p><strong>Tiderc:</strong></p>
-        {% endif %}
         <p><a class="btn btn-primary btn-sm btn-block" href="{% url "accounts:logout" %}">Logout</a></p></div>
 </div>

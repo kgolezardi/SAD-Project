@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from accounts.models import User, Customer
 from core.errors import AuctionFinishedError, PriceValidationError, UserAccessError, LowCreditError, \
-    AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError
+    AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError, AuctionStateError
 from notifications.models import Notification
 
 
@@ -27,6 +27,15 @@ def get_image_filename(instance, filename):
 
 
 class Auction(models.Model):
+    PENDING = 0
+    APPROVED = 1
+    REJECTED = 2
+    STATE_CHOICES = (
+        (PENDING, 'pending'),
+        (APPROVED, 'approved'),
+        (REJECTED, 'rejected'),
+    )
+
     title = models.CharField(max_length=50)
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
     short_description = models.TextField(max_length=500, help_text='Enter a brief description of the item to show'
@@ -40,6 +49,7 @@ class Auction(models.Model):
     received = models.BooleanField(default=False)
     receive_date = models.DateTimeField(null=True, blank=True, verbose_name='Receipt date')
     finalized = models.BooleanField(default=False)
+    state = models.IntegerField(choices=STATE_CHOICES, default=PENDING)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -61,6 +71,8 @@ class Auction(models.Model):
                self.highest_bid is not None and price < self.highest_bid.price + settings.MIN_INCREMENT_LIMIT
 
     def finish(self):
+        if self.state != Auction.APPROVED:
+            return
         Notification.objects.create(user=self.owner.user,
                                     content="Your auction '%s' is now finished. You can go to its page to see the "
                                             "contact information for the highest bidder. You have %d days to send the "
@@ -76,7 +88,7 @@ class Auction(models.Model):
         if self.finalized:
             return
         highest_bid = self.highest_bid
-        if self.highest_bid is not None:
+        if self.state == Auction.APPROVED and self.highest_bid is not None:
             Notification.objects.create(user=self.owner.user,
                                         content="You didn't send the item '%s' to the highest bidder in time window "
                                                 "you were supposed to. Your auction is now finalized." % self.title)
@@ -89,6 +101,8 @@ class Auction(models.Model):
         self.save()
 
     def place_bid(self, customer, price):
+        if self.state != Auction.APPROVED:
+            raise AuctionStateError()
         if self.finished:
             raise AuctionFinishedError()
         if self.valid_price(price):
@@ -112,6 +126,8 @@ class Auction(models.Model):
     def receive(self, customer):
         highest_bid = self.highest_bid
 
+        if self.state != Auction.APPROVED:
+            raise AuctionStateError()
         if not self.finished:
             raise AuctionNotFinishedError()
         if highest_bid is None or highest_bid.owner != customer:
@@ -130,6 +146,14 @@ class Auction(models.Model):
         self.received = True
         self.finalized = True
         self.receive_date = timezone.now()
+        self.save()
+
+    def approve(self):
+        self.state = Auction.APPROVED
+        self.save()
+
+    def reject(self):
+        self.state = Auction.REJECTED
         self.save()
 
 
