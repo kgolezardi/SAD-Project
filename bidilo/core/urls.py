@@ -16,6 +16,7 @@ urlpatterns = [
     path('auction/<int:auction_id>/reject', views.reject_auction, name='reject'),
     path('auction/<int:auction_id>/bid', views.offer_bid, name='bid'),
     path('auction/<int:auction_id>/receipt', views.confirm_receipt, name='receipt'),
+    path('auction/<int:auction_id>/remove', views.remove_auction, name='remove_auction'),
     path('credit', views.credit, name='credit'),
     path('credit/charge', views.charge_credit, name='charge_credit'),
     path('credit/withdraw', views.withdraw_credit, name='withdraw_credit'),

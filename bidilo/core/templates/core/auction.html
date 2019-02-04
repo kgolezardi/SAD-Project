@@ -35,8 +35,8 @@
                     {% elif auction.state == auction.REJECTED %}
                         <small class="text-danger">(Rejected)</small>
                     {% endif %}
-
                 {% endif %}
+
                 {% if user.is_authenticated and user.is_customer %}
                     {% if auction.owner.user == user %}
                         {% if auction.state == auction.PENDING %}
@@ -44,7 +44,7 @@
                             <a href="{% url 'core:auctions' %}" class="btn btn-warning">
                                 <span class="fa fa-edit"></span>
                             </a>
-                            <a href="{% url 'core:pending' %}" class="btn btn-danger">
+                            <a href="{% url 'core:remove_auction' auction.id %}" class="btn btn-danger">
                                 <span class="fa fa-trash"></span>
                             </a>
                         {% elif auction.state == auction.APPROVED %}

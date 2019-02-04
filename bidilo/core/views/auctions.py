@@ -88,6 +88,7 @@ def my_purchases(request):
     purchases = [bid.auction for bid in my_bids if bid.auction.highest_bid == bid]
     return render(request, 'core/my_purchases.html', {'auction_list': purchases})
 
+
 @login_required
 @user_passes_test(lambda u: u.is_customer)
 def offer_bid(request, auction_id):
@@ -146,6 +147,17 @@ def confirm_receipt(request, auction_id):
     except AuctionFinalizedError:
         messages.error(request, FINALIZED_MESSAGE)
 
+    return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_customer)
+def remove_auction(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    if auction.owner == request.user.customer and auction.state == Auction.PENDING:
+        auction.delete()
+        return HttpResponseRedirect(reverse('core:auctions'))
+    messages.error(request, "You don't have access to remove this auction right now.")
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 
