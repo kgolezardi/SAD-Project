@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -14,7 +15,7 @@ from core.tasks import finish_auction_time
 
 
 def auctions(request):
-    auction_list = Auction.objects.filter(approved=True)
+    auction_list = Auction.objects.filter()
     return render(request, 'core/auctions.html', {'auction_list': auction_list})
 
 
@@ -34,6 +35,7 @@ def description(request, auction_id):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_customer)
 def offer_bid(request, auction_id):
     AUCTION_FINISHED_MESSAGE = 'The auction is now finished. You cannot offer bid for finished aucitons.'
     LOW_PRICE_MESSAGE = 'Your price is not high enough. It should be higher than the base price the current highest ' \
@@ -63,6 +65,7 @@ def offer_bid(request, auction_id):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_customer)
 def confirm_receipt(request, auction_id):
     FINALIZED_MESSAGE = 'The auction is finalized'
     INVALID_USER_MESSAGE = 'You are not the highest bidder.'
@@ -88,8 +91,11 @@ def confirm_receipt(request, auction_id):
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 
-class AuctionCreateView(View):
+class AuctionCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
     template_name = "core/create_auction.html"
+
+    def test_func(self):
+        return self.request.user.is_customer
 
     def post(self, request):
         form = AuctionCreateForm(request.POST, request.FILES, owner=request.user.customer)

@@ -1,26 +1,35 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import User, Customer
+from django.contrib.auth import forms
+from .models import User, Customer, Supervisor
 
 
-class CustomerCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
+class UserCreationForm(forms.UserCreationForm):
+    class Meta(forms.UserCreationForm.Meta):
         model = User
         fields = ('name', 'username', 'email', 'address', 'phone_number')
 
+    def __init__(self, *args, **kwargs):
+        self.supervisor = kwargs.pop('supervisor', False)
+        super().__init__(*args, **kwargs)
+
     def save(self):
         user = super().save(commit=False)
-        user.is_customer = True
+        if self.supervisor:
+            user.is_supervisor = True
+        else:
+            user.is_customer = True
         user.save()
-        Customer.objects.create(user=user)
+        if self.supervisor:
+            Supervisor.objects.create(user=user)
+        else:
+            Customer.objects.create(user=user)
         return user
 
 
-class CustomerChangeForm(UserChangeForm):
-    class Meta:
+class UserChangeForm(forms.UserChangeForm):
+    class Meta(forms.UserChangeForm.Meta):
         model = User
         fields = ('name', 'username', 'email', 'address', 'phone_number')
 
     def save(self):
         user = super().save()
-        user.customer.save()
         return user
