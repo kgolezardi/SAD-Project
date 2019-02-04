@@ -11,7 +11,7 @@ from django.views import View
 from core.errors import AuctionFinishedError, PriceValidationError, UserAccessError, LowCreditError, \
     AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError, AuctionStateError
 from core.forms import AuctionCreateForm
-from core.models import Auction
+from core.models import Auction, Bid
 from core.tasks import finish_auction_time
 
 
@@ -31,7 +31,7 @@ def description(request, auction_id):
 
 @login_required
 @user_passes_test(lambda u: u.is_supervisor)
-def pending_auctions(request):
+def pending_auctions_view(request):
     auction_list = Auction.objects.filter(state=Auction.PENDING)
     return render(request, 'core/auctions.html', {'auction_list': auction_list,
                                                   'pending': True})
@@ -56,14 +56,37 @@ def reject_auction(request, auction_id):
 
 
 # FIXME: transactions
-# TODO: unapproved auctions (transaction assignment)
-# TODO: approve/unapprove auction
-# TODO: my auctions (pending, ongoing, finished, finalized, rejected, suspended)
+# DONE: unapproved auctions (transaction assignment)
+# DONE: approve/unapprove auction
+# DONE: my auctions (pending, ongoing, finished, rejected, suspended) / purchases
 # TODO: edit/delete auction while pending
 # TODO: reports
 # TODO: suspend auction (see num. of reports)
 # TODO: auction labels (yours, highest)
 
+
+@login_required
+@user_passes_test(lambda u: u.is_customer)
+def my_actions(request):
+    customer = request.user.customer
+    pending_auctions = Auction.objects.filter(owner=customer, state=Auction.PENDING)
+    approved_auctions = list(Auction.objects.filter(owner=customer, state=Auction.APPROVED))
+    ongoing_auctions = [auction for auction in approved_auctions if not auction.finished]
+    finished_auctions = [auction for auction in approved_auctions if auction.finished]
+    rejected_auctions = Auction.objects.filter(owner=customer, state=Auction.REJECTED)
+    return render(request, 'core/my_auctions.html', {'pending_auctions': pending_auctions,
+                                                     'ongoing_auctions': ongoing_auctions,
+                                                     'finished_auctions': finished_auctions,
+                                                     'rejected_auctions': rejected_auctions})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_customer)
+def my_purchases(request):
+    customer = request.user.customer
+    my_bids = Bid.objects.filter(owner=customer)
+    purchases = [bid.auction for bid in my_bids if bid.auction.highest_bid == bid]
+    return render(request, 'core/my_purchases.html', {'auction_list': purchases})
 
 @login_required
 @user_passes_test(lambda u: u.is_customer)

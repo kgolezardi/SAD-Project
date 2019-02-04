@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+
+{% load bootstrap4 %}
+{% load staticfiles %}
+
+{% block content %}
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="my-4">My Auctions</h1>
+            </div>
+            <div class="col-md-6 text-right my-4">
+                <a href="{% url 'core:auctions' %}" class="btn btn-dark">All</a>
+                <a href="{% url 'core:my_purchases' %}" class="btn btn-info">My Purchases</a>
+                <a href="{% url 'core:create_auction' %}" class="btn btn-success">Create new auction</a>
+            </div>
+        </div>
+
+        <script src="{% static 'js/countdown.js' %}"></script>
+
+        <h4>Pending</h4>
+        {% include 'core/auctions_row.html' with auction_list=pending_auctions %}
+
+        <h4>Ongoing</h4>
+        {% include 'core/auctions_row.html' with auction_list=ongoing_auctions %}
+
+        <h4>Finished</h4>
+        {% include 'core/auctions_row.html' with auction_list=finished_auctions %}
+
+        <h4>Rejected</h4>
+        {% include 'core/auctions_row.html' with auction_list=rejected_auctions %}
+
+    </div>
+    <!-- /.container -->
+{% endblock %}
