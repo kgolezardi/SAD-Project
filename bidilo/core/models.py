@@ -8,6 +8,8 @@ from django.db import models
 from django.utils import timezone
 
 from accounts.models import User, Customer
+from core.errors import AuctionFinishedError, PriceValidationError, UserAccessError, LowCreditError, \
+    AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError
 from notifications.models import Notification
 
 
@@ -39,6 +41,11 @@ class Auction(models.Model):
     receive_date = models.DateTimeField(null=True, blank=True, verbose_name='Receipt date')
     finalized = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.pub_date = timezone.now()
+        return super().save(*args, **kwargs)
+
     @property
     def highest_bid(self):
         if self.finalized and not self.received:
@@ -48,6 +55,10 @@ class Auction(models.Model):
     @property
     def finished(self):
         return self.deadline < timezone.now()
+
+    def valid_price(self, price):
+        return price < self.base_price or \
+               self.highest_bid is not None and price < self.highest_bid.price + settings.MIN_INCREMENT_LIMIT
 
     def finish(self):
         Notification.objects.create(user=self.owner.user,
@@ -61,7 +72,7 @@ class Auction(models.Model):
                                                 "The owner is supposed to give you the item in %d days from now."
                                                 % (self.title, settings.AUCTION_PAYBACK_TIME.days))
 
-    def finalize(self):
+    def timeover_finalize(self):
         if self.finalized:
             return
         highest_bid = self.highest_bid
@@ -77,8 +88,39 @@ class Auction(models.Model):
         self.finalized = True
         self.save()
 
-    def receive(self):
+    def place_bid(self, customer, price):
+        if self.finished:
+            raise AuctionFinishedError()
+        if self.valid_price(price):
+            raise PriceValidationError()
+        if customer == self.owner:
+            raise UserAccessError()
+        if not customer.can_pay(price):
+            raise LowCreditError()
+
         highest_bid = self.highest_bid
+        if highest_bid is not None:
+            Notification.objects.create(user=highest_bid.owner.user,
+                                        content="Someone just placed a higher bid than yours for item '%s'"
+                                                % self.title)
+            highest_bid.owner.release_credit(highest_bid.price)
+        Notification.objects.create(user=self.owner.user,
+                                    content="Someone just placed a bid on your item '%s'" % self.title)
+        customer.reserve_credit(price)
+        Bid.objects.create(owner=customer, auction=self, price=price)
+
+    def receive(self, customer):
+        highest_bid = self.highest_bid
+
+        if not self.finished:
+            raise AuctionNotFinishedError()
+        if highest_bid is None or highest_bid.owner != customer:
+            raise UserAccessError()
+        if self.received:
+            raise AuctionReceivedError()
+        if self.finalized:
+            raise AuctionFinalizedError()
+
         highest_bid.owner.pay(highest_bid.price)
         Notification.objects.create(user=self.owner.user,
                                     content="Your item '%s' has been received by the new owner." % self.title)
@@ -89,29 +131,6 @@ class Auction(models.Model):
         self.finalized = True
         self.receive_date = timezone.now()
         self.save()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.pub_date = timezone.now()
-        return super().save(*args, **kwargs)
-
-    def valid_price(self, price):
-        return price < self.base_price or \
-               self.highest_bid is not None and price < self.highest_bid.price + settings.MIN_INCREMENT_LIMIT
-
-    def place_bid(self, customer, price):
-        # TODO: atomic
-        highest_bid = self.highest_bid
-        if highest_bid is not None:
-            Notification.objects.create(user=highest_bid.owner.user,
-                                        content="Someone just placed a higher bid than yours for item '%s'"
-                                                % self.title)
-            highest_bid.owner.release_credit(highest_bid.price)
-        Notification.objects.create(user=self.owner.user,
-                                    content="Someone just placed a bid on your item '%s'" % self.title)
-        customer.reserve_credit(price)
-        bid = Bid(owner=customer, auction=self, price=price)
-        bid.save()
 
 
 class AuctionImage(models.Model):

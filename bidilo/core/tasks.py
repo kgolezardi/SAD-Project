@@ -14,4 +14,4 @@ def finish_auction_time(auction_id):
 @shared_task
 def finalize_auction(auction_id):
     auction = Auction.objects.get(id=auction_id)
-    auction.finalize()
+    auction.timeover_finalize()

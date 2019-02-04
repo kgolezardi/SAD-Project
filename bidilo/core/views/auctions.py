@@ -6,13 +6,15 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 
+from core.errors import AuctionFinishedError, PriceValidationError, UserAccessError, LowCreditError, \
+    AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError
 from core.forms import AuctionCreateForm
 from core.models import Auction
 from core.tasks import finish_auction_time
 
 
 def auctions(request):
-    auction_list = Auction.objects.all()
+    auction_list = Auction.objects.filter(approved=True)
     return render(request, 'core/auctions.html', {'auction_list': auction_list})
 
 
@@ -21,31 +23,41 @@ def description(request, auction_id):
     return render(request, 'core/auction.html', {'auction': auction})
 
 
+# FIXME: transactions
+# TODO: unapproved auctions (transaction assignment)
+# TODO: approve/unapprove auction
+# TODO: my auctions (pending, ongoing, finished, finalized, rejected, suspended)
+# TODO: edit/delete auction while pending
+# TODO: reports
+# TODO: suspend auction (see num. of reports)
+# TODO: auction labels (yours, highest)
+
+
 @login_required
 def offer_bid(request, auction_id):
     AUCTION_FINISHED_MESSAGE = 'The auction is now finished. You cannot offer bid for finished aucitons.'
-    LOW_PRICE_MESSAGE = 'Your price is not high enough. It should be higher than the current highest bid and the ' \
-                        'base price plus the minimum bid increment (%s).' % settings.MIN_INCREMENT_LIMIT
+    LOW_PRICE_MESSAGE = 'Your price is not high enough. It should be higher than the base price the current highest ' \
+                        'bid plus the minimum bid increment (%s).' % settings.MIN_INCREMENT_LIMIT
     OWN_AUCTION_MESSAGE = 'You cannot bid on your own auction.'
     SUCCESSFULL_BID_MESSAGE = 'You have successfully bid on this auction.'
     NO_CREDIT_MESSAGE = 'You do not have enough credit in your account. Please charge your credit before offering a ' \
-                        'higher bid. '
+                        'higher bid.'
 
     auction = get_object_or_404(Auction, id=auction_id)
     price = int(request.POST.get("price", 0))
     customer = request.user.customer
 
-    if auction.finished:
-        messages.error(request, AUCTION_FINISHED_MESSAGE)
-    elif auction.valid_price(price):
-        messages.error(request, LOW_PRICE_MESSAGE)
-    elif customer == auction.owner:
-        messages.error(request, OWN_AUCTION_MESSAGE)
-    elif not customer.can_pay(price):
-        messages.error(request, NO_CREDIT_MESSAGE)
-    else:
+    try:
         auction.place_bid(customer, price)
         messages.success(request, SUCCESSFULL_BID_MESSAGE)
+    except AuctionFinishedError:
+        messages.error(request, AUCTION_FINISHED_MESSAGE)
+    except PriceValidationError:
+        messages.error(request, LOW_PRICE_MESSAGE)
+    except UserAccessError:
+        messages.error(request, OWN_AUCTION_MESSAGE)
+    except LowCreditError:
+        messages.error(request, NO_CREDIT_MESSAGE)
 
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
@@ -59,20 +71,19 @@ def confirm_receipt(request, auction_id):
     SUCCESSFULL_RECEIVE_MESSAGE = 'You have successfully received the item.'
 
     auction = get_object_or_404(Auction, id=auction_id)
-    highest_bid = auction.highest_bid
     customer = request.user.customer
 
-    if not auction.finished:
-        messages.error(request, UNFINISHED_MESSAGE)
-    elif highest_bid is None or highest_bid.owner != customer:
-        messages.error(request, INVALID_USER_MESSAGE)
-    elif auction.received:
-        messages.error(request, ALREADY_RECEIVED_MESSAGE)
-    elif auction.finalized:
-        messages.error(request, FINALIZED_MESSAGE)
-    else:
-        auction.receive()
+    try:
+        auction.receive(customer)
         messages.success(request, SUCCESSFULL_RECEIVE_MESSAGE)
+    except AuctionNotFinishedError:
+        messages.error(request, UNFINISHED_MESSAGE)
+    except UserAccessError:
+        messages.error(request, INVALID_USER_MESSAGE)
+    except AuctionReceivedError:
+        messages.error(request, ALREADY_RECEIVED_MESSAGE)
+    except AuctionFinalizedError:
+        messages.error(request, FINALIZED_MESSAGE)
 
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
