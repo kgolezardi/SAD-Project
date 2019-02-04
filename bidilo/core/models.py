@@ -149,10 +149,14 @@ class Auction(models.Model):
         self.save()
 
     def approve(self):
+        Notification.objects.create(user=self.owner.user,
+                                    content="Your item '%s' has been approved by our supervisors." % self.title)
         self.state = Auction.APPROVED
         self.save()
 
     def reject(self):
+        Notification.objects.create(user=self.owner.user,
+                                    content="Your item '%s' has been rejected by our supervisors." % self.title)
         self.state = Auction.REJECTED
         self.save()
 

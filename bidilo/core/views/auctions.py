@@ -43,6 +43,7 @@ def pending_auctions_view(request):
 def approve_auction(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
     if auction.state == Auction.PENDING:
+        finish_auction_time.apply_async((auction.id,), eta=auction.deadline)
         auction.approve()
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
@@ -60,7 +61,7 @@ def reject_auction(request, auction_id):
 # DONE: unapproved auctions (transaction assignment)
 # DONE: approve/unapprove auction
 # DONE: my auctions (pending, ongoing, finished, rejected, suspended) / purchases
-# TODO: edit/delete auction while pending
+# DONE: edit/delete auction while pending
 # TODO: reports
 # TODO: suspend auction (see num. of reports)
 # TODO: auction labels (yours, highest)
@@ -210,7 +211,6 @@ class AuctionCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
         form = AuctionCreateForm(request.POST, request.FILES, owner=request.user.customer)
         if form.is_valid():
             obj = form.save()
-            finish_auction_time.apply_async((obj.id,), eta=obj.deadline)
             return HttpResponseRedirect(reverse("core:description", kwargs={
                 'auction_id': obj.id,
             }))
