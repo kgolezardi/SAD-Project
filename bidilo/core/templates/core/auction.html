@@ -41,7 +41,7 @@
                     {% if auction.owner.user == user %}
                         {% if auction.state == auction.PENDING %}
                             <small class="text-warning">(Pending)</small>
-                            <a href="{% url 'core:auctions' %}" class="btn btn-warning">
+                            <a href="{% url 'core:edit_auction' auction.id %}" class="btn btn-warning">
                                 <span class="fa fa-edit"></span>
                             </a>
                             <a href="{% url 'core:remove_auction' auction.id %}" class="btn btn-danger">

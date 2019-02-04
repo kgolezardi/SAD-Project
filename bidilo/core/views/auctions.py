@@ -7,11 +7,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
+from django.views import generic
 
 from core.errors import AuctionFinishedError, PriceValidationError, UserAccessError, LowCreditError, \
     AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError, AuctionStateError
-from core.forms import AuctionCreateForm
-from core.models import Auction, Bid
+from core.forms import AuctionCreateForm, AuctionChangeForm
+from core.models import Auction, Bid, AuctionImage
 from core.tasks import finish_auction_time
 
 
@@ -159,6 +160,44 @@ def remove_auction(request, auction_id):
         return HttpResponseRedirect(reverse('core:auctions'))
     messages.error(request, "You don't have access to remove this auction right now.")
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_customer)
+def delete_image(request, auction_id, image_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    image = get_object_or_404(AuctionImage, id=image_id)
+    if auction.owner == request.user.customer and auction.state == Auction.PENDING and \
+            image.auction == auction:
+        image.delete()
+        return HttpResponseRedirect(reverse('core:edit_auction', args=(auction_id,)))
+    messages.error(request, "You don't have access to remove this image right now.")
+    return HttpResponseRedirect(reverse('core:edit_auciton', args=(auction_id,)))
+
+
+class AuctionEditView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Auction
+    form_class = AuctionChangeForm
+    template_name = 'core/edit_auction.html'
+
+    def test_func(self):
+        return self.request.user.is_customer
+
+    def get_object(self, queryset=None):
+        auction_id = self.kwargs.get('auction_id')
+        auction = get_object_or_404(Auction, id=auction_id)
+        if auction.state != Auction.PENDING:
+            raise Http404
+        return auction
+
+    def get_success_url(self):
+        return reverse('core:description', args=(self.object.id,))
+
+    def get_context_data(self, **kwargs):
+        small_images = AuctionImage.objects.filter(auction=self.object)
+        kwargs['small_images'] = small_images
+        kwargs['auction_id'] = self.object.id
+        return super().get_context_data(**kwargs)
 
 
 class AuctionCreateView(LoginRequiredMixin, UserPassesTestMixin, View):

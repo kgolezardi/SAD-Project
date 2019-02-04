@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+    {{ form.media }}
+
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <h1 class="my-4">Edit auction</h1>
+            <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <span>Current small images:</span><br>
+                {% for image in small_images %}
+                    <span>
+                        Image {{ forloop.counter }}
+                        (<a href="{{ image.file.url }}">View</a> | <a href="{% url 'core:delete_image' auction_id image.id %}">Delete</a>)
+                    </span><br>
+                {% empty %}
+                    No images.
+                {% endfor %}
+                {% buttons %}
+                    <br><p><button type="submit" class="form-control btn btn-success">Edit</button></p>
+                    <p><a href="{% url 'core:description' auction_id %}" class="form-control btn btn-danger text-light">Cancel</a></p>
+                {% endbuttons %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
