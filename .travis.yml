@@ -3,12 +3,12 @@ python:
   - "3.6"
 services:
   - rabbitmq
-  - postgresql
+  - sqlite
 env:
-  -DJANGO=2.1 DB=postgresql
+  -DJANGO=2.1 DB=sqlite
 install:
-  - pip install -r requirements/development.txt
+  - pip install -r bidilo/requirements/development.txt
 before_script:
-  - python manage.py migrate
+  - python bidilo/manage.py migrate
 script:
-  - python manage.py test
+  - python bidilo/manage.py test
