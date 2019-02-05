@@ -151,6 +151,6 @@ AUCTION_PAYBACK_TIME = timedelta(days=10)
 AUCTION_IMAGE_LIMIT_MB = 5
 
 try:
-    from local_settings import *
+    from .local_settings import *
 except ImportError:
     pass
