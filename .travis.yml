@@ -1,0 +1,14 @@
+language: python
+python:
+  - "3.6"
+services:
+  - rabbitmq
+  - sqlite
+env:
+  -DJANGO=2.1 DB=sqlite
+install:
+  - pip install -r bidilo/requirements/development.txt
+before_script:
+  - python bidilo/manage.py migrate
+script:
+  - python bidilo/manage.py test
