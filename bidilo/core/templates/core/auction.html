@@ -12,7 +12,7 @@
                     <small>
                         {{ auction.title }}
                         {% if user.is_authenticated and user.is_supervisor and auction.state == auction.APPROVED %}
-                            <span class="fa fa-info-circle"></span>: 0
+                            <span class="fa fa-info-circle"></span>: {{ auction.report_count }}
                         {% endif %}
                     </small>
                 </h1>
@@ -53,9 +53,10 @@
                             <small class="text-danger">(Rejected)</small>
                         {% endif %}
                     {% else %}
-                        <a href="{% url 'core:pending' %}" class="btn btn-info">
+                        <button class="btn btn-info" id="report-btn" data-toggle="modal"
+                                data-target="#reportModal">
                             <span class="fa fa-info-circle"></span>
-                        </a>
+                        </button>
                     {% endif %}
                 {% endif %}
             </div>
@@ -179,6 +180,10 @@
 
     <!-- Bid Modal -->
     {% include 'core/bid_modal.html' %}
+
+    <!-- Report Modal -->
+    {% include 'core/report_modal.html' %}
+
 
     <!-- Receipt Modal -->
     {% include 'core/receipt_modal.html' %}

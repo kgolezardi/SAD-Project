@@ -12,7 +12,7 @@ from django.views import generic
 from core.errors import AuctionFinishedError, PriceValidationError, UserAccessError, LowCreditError, \
     AuctionNotFinishedError, AuctionReceivedError, AuctionFinalizedError, AuctionStateError
 from core.forms import AuctionCreateForm, AuctionChangeForm
-from core.models import Auction, Bid, AuctionImage
+from core.models import Auction, Bid, AuctionImage, Report
 from core.tasks import finish_auction_time
 
 
@@ -159,6 +159,16 @@ def remove_auction(request, auction_id):
         auction.delete()
         return HttpResponseRedirect(reverse('core:auctions'))
     messages.error(request, "You don't have access to remove this auction right now.")
+    return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_customer)
+def report_auction(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    reason = str(request.POST.get('reason', ''))
+    if auction.owner != request.user.customer and auction.state == Auction.APPROVED:
+        Report.objects.create(reporter_customer=request.user.customer, reported_auction=auction, reason=reason)
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 

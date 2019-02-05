@@ -66,6 +66,10 @@ class Auction(models.Model):
     def finished(self):
         return self.deadline < timezone.now()
 
+    @property
+    def report_count(self):
+        return self.report_set.order_by('reporter_customer_id').values('reporter_customer_id').distinct().count()
+
     def valid_price(self, price):
         return price < self.base_price or \
                self.highest_bid is not None and price < self.highest_bid.price + settings.MIN_INCREMENT_LIMIT
@@ -172,3 +176,23 @@ class Bid(models.Model):
         if not self.id:
             self.date = timezone.now()
         return super().save(*args, **kwargs)
+
+class Report(models.Model):
+    reporter_customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    reported_auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    reason = models.TextField(max_length=200, help_text='Please specify the reason.')
+    date = models.DateTimeField()
+    read = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.date = timezone.now()
+        return super().save(*args, **kwargs)
+
+    def set_read(self):
+        self.read = True
+        self.save()
+
+    def set_unread(self):
+        self.read = False
+        self.save()

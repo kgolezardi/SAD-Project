@@ -19,7 +19,10 @@ urlpatterns = [
     path('auction/<int:auction_id>/remove', views.remove_auction, name='remove_auction'),
     path('auction/<int:auction_id>/edit', views.AuctionEditView.as_view(), name='edit_auction'),
     path('auction/<int:auction_id>/image/<int:image_id>/delete', views.delete_image, name='delete_image'),
+    path('auction/<int:auction_id>/report', views.report_auction, name='report_auction'),
     path('credit', views.credit, name='credit'),
     path('credit/charge', views.charge_credit, name='charge_credit'),
     path('credit/withdraw', views.withdraw_credit, name='withdraw_credit'),
+    path('reports', views.show_reports, name='show_reports'),
+    path('report/<int:report_id>', views.resolve, name='resolve_report'),
 ]

@@ -1,0 +1,40 @@
+{% extends "core/base.html" %}
+
+{% load bootstrap4 %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="my-4">Reports</h1>
+            </div>
+        </div>
+        <div class="row">
+            {% for report in reports %}
+                <div class="col-md-3 portfolio-item">
+                    <div class="card h-100">
+                        <img class="card-img-top" src="{{ report.reported_auction.picture.url }}" alt="">
+                        <div class="card-body">
+                            <div class="row">
+                                <h4 class="col card-title">
+                                    {{ report.reported_auction.title }}
+                                </h4>
+                                <div class="col text-right my-1">
+                                    <a href="{% url 'core:resolve_report' report.id %}" class="btn btn-sm btn-warning">Resolve</a>
+                                </div>
+                            </div>
+                            <p></p>
+                            <p class="card-text">{{ report.reason }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            {% empty %}
+                <div class="col-md-12 portfolio-item">
+                    <p> No Reports :) </p>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- /.row -->
+    </div>
+{% endblock %}
