@@ -56,6 +56,14 @@ def reject_auction(request, auction_id):
         auction.reject()
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
+@login_required
+@user_passes_test(lambda u: u.is_supervisor)
+def suspend_auction(request, auction_id):
+    auction = get_object_or_404(Auction, id=auction_id)
+    if auction.state == Auction.APPROVED:
+        auction.suspend()
+    return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
+
 
 # FIXME: transactions
 # DONE: unapproved auctions (transaction assignment)

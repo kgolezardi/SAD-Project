@@ -25,4 +25,5 @@ urlpatterns = [
     path('credit/withdraw', views.withdraw_credit, name='withdraw_credit'),
     path('reports', views.show_reports, name='show_reports'),
     path('report/<int:report_id>', views.resolve, name='resolve_report'),
+    path('suspend/<int:auction_id>', views.suspend_auction, name='suspend'),
 ]

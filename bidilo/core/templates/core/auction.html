@@ -29,11 +29,13 @@
                         </a>
                     {% elif auction.state == auction.APPROVED %}
                         <small class="text-success">(Approved)</small>
-                        <a href="{% url 'core:pending' %}" class="btn btn-danger">
-                            <span class="fa fa-trash"></span>
+                        <a href="{% url 'core:suspend' auction.id %}" class="btn btn-dark">
+                            <span class="fa fa-remove"></span>
                         </a>
                     {% elif auction.state == auction.REJECTED %}
                         <small class="text-danger">(Rejected)</small>
+                    {% elif auction.state == auction.SUSPENDED %}
+                        <small class="text-danger">(Suspended)</small>
                     {% endif %}
                 {% endif %}
 
@@ -51,6 +53,8 @@
                             <small class="text-success">(Approved)</small>
                         {% elif auction.state == auction.REJECTED %}
                             <small class="text-danger">(Rejected)</small>
+                        {% elif auction.state == auction.SUSPENDED %}
+                            <small class="text-danger">(Suspended)</small>
                         {% endif %}
                     {% else %}
                         <button class="btn btn-info" id="report-btn" data-toggle="modal"

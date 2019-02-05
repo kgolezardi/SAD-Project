@@ -19,9 +19,9 @@
             <div class="col-md-6 text-right my-4">
                 {% if user.is_authenticated and user.is_supervisor %}
                     {% if pending %}
-                        <a href="{% url 'core:auctions' %}" class="btn btn-info">Available</a>
+                        <a href="{% url 'core:auctions' %}" class="btn btn-info">Show Available</a>
                     {% else %}
-                        <a href="{% url 'core:pending' %}" class="btn btn-dark">Pending</a>
+                        <a href="{% url 'core:pending' %}" class="btn btn-dark">Show Pending</a>
                     {% endif %}
                 {% endif %}
                 {% if user.is_authenticated and user.is_customer %}

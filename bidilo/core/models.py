@@ -30,10 +30,12 @@ class Auction(models.Model):
     PENDING = 0
     APPROVED = 1
     REJECTED = 2
+    SUSPENDED = 3
     STATE_CHOICES = (
         (PENDING, 'pending'),
         (APPROVED, 'approved'),
         (REJECTED, 'rejected'),
+        (SUSPENDED, 'suspended'),
     )
 
     title = models.CharField(max_length=50)
@@ -154,14 +156,20 @@ class Auction(models.Model):
 
     def approve(self):
         Notification.objects.create(user=self.owner.user,
-                                    content="Your item '%s' has been approved by our supervisors." % self.title)
+                                    content="Your auction '%s' has been approved by our supervisors." % self.title)
         self.state = Auction.APPROVED
         self.save()
 
     def reject(self):
         Notification.objects.create(user=self.owner.user,
-                                    content="Your item '%s' has been rejected by our supervisors." % self.title)
+                                    content="Your auction '%s' has been rejected by our supervisors." % self.title)
         self.state = Auction.REJECTED
+        self.save()
+
+    def suspend(self):
+        Notification.objects.create(user=self.owner.user,
+                                    content="Your auction '%s' has been suspended by supervisors." % self.title)
+        self.state = Auction.SUSPENDED
         self.save()
 
 
