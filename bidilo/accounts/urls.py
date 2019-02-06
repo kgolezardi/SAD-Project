@@ -8,5 +8,5 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('profile', views.ProfileView.as_view(), name='profile'),
     path('signup', views.CustomerSignUpView.as_view(), name='signup'),
-    path('supervisor', views.SupervisorSignUpView.as_view(), name='supervisor'),
+    path('supervisor', views.SupervisorSignUpView.as_view(), name='create_supervisor'),
 ]

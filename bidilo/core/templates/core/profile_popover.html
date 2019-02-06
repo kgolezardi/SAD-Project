@@ -12,5 +12,8 @@
             <p><a href="{% url 'core:show_reports' %}">Reports <span
                 class="badge badge-primary badge-pill">{{ report_count }}</span></a></p>
         {% endif %}
+        {% if user.is_superuser %}
+            <p><a href="{% url 'accounts:create_supervisor' %}">Create a supervisor...</a></p>
+        {% endif %}
         <p><a class="btn btn-primary btn-sm btn-block" href="{% url "accounts:logout" %}">Logout</a></p></div>
 </div>
