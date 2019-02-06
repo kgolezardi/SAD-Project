@@ -44,6 +44,7 @@ class Auction(models.Model):
                                                                    'in the auctions list')
     description = models.TextField(max_length=1000, help_text='Enter a more detailed description of the item')
     pub_date = models.DateTimeField(verbose_name='Publication date')
+    last_update = models.DateTimeField()
     picture = models.ImageField(upload_to=get_image_filename, validators=[auction_picture_validator],
                                 help_text='The main image for the auction')
     base_price = models.PositiveIntegerField(default=10000, help_text='Base price in Tomans')
@@ -56,6 +57,7 @@ class Auction(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.pub_date = timezone.now()
+        self.last_update = timezone.now()
         return super().save(*args, **kwargs)
 
     @property
@@ -188,6 +190,7 @@ class Bid(models.Model):
         if not self.id:
             self.date = timezone.now()
         return super().save(*args, **kwargs)
+
 
 class Report(models.Model):
     reporter_customer = models.ForeignKey(Customer, on_delete=models.CASCADE)

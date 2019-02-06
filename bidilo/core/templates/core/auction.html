@@ -21,12 +21,20 @@
                 {% if user.is_authenticated and user.is_supervisor %}
                     {% if auction.state == auction.PENDING %}
                         <small class="text-warning">(Pending)</small>
-                        <a href="{% url 'core:approve' auction.id %}" class="btn btn-success">
-                            <span class="fa fa-thumbs-up"></span>
-                        </a>
-                        <a href="{% url 'core:reject' auction.id %}" class="btn btn-danger">
-                            <span class="fa fa-thumbs-down"></span>
-                        </a>
+                        <form action="{% url 'core:approve' auction.id %}" method="POST" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="last_update" value="{{ auction.last_update.isoformat }}" />
+                            <button type="submit" class="btn btn-success">
+                                <span class="fa fa-thumbs-up"></span>
+                            </button>
+                        </form>
+                        <form action="{% url 'core:reject' auction.id %}" method="POST" class="d-inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="last_update" value="{{ auction.last_update.isoformat }}" />
+                            <button type="submit" class="btn btn-danger">
+                                <span class="fa fa-thumbs-down"></span>
+                            </button>
+                        </form>
                     {% elif auction.state == auction.APPROVED %}
                         <small class="text-success">(Approved)</small>
                         <a href="{% url 'core:suspend' auction.id %}" class="btn btn-dark">

@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import Http404
+from django.http import HttpResponseForbidden
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -42,9 +43,15 @@ def pending_auctions_view(request):
 @user_passes_test(lambda u: u.is_supervisor)
 def approve_auction(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
-    if auction.state == Auction.PENDING:
-        finish_auction_time.apply_async((auction.id,), eta=auction.deadline)
-        auction.approve()
+    supposed_update = request.POST.get('last_update')
+    actual_update = auction.last_update
+    if supposed_update == actual_update.isoformat():
+        if auction.state == Auction.PENDING:
+            finish_auction_time.apply_async((auction.id,), eta=auction.deadline)
+            auction.approve()
+    else:
+        messages.error(request, "The auction info had been changed since you last visit.")
+
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 
@@ -52,8 +59,14 @@ def approve_auction(request, auction_id):
 @user_passes_test(lambda u: u.is_supervisor)
 def reject_auction(request, auction_id):
     auction = get_object_or_404(Auction, id=auction_id)
-    if auction.state == Auction.PENDING:
-        auction.reject()
+    supposed_update = request.POST.get('last_update')
+    actual_update = auction.last_update
+    if supposed_update == actual_update.isoformat():
+        if auction.state == Auction.PENDING:
+            auction.reject()
+    else:
+        messages.error(request, "The auction info had been changed since you last visit.")
+
     return HttpResponseRedirect(reverse('core:description', args=(auction_id,)))
 
 @login_required
