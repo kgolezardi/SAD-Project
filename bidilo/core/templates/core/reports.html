@@ -13,11 +13,14 @@
             {% for report in reports %}
                 <div class="col-md-3 portfolio-item">
                     <div class="card h-100">
-                        <img class="card-img-top" src="{{ report.reported_auction.picture.url }}" alt="">
+                        <a href="{% url 'core:description' report.reported_auction.id %}">
+                            <img class="card-img-top" src="{{ report.reported_auction.picture.url }}" alt="">
+                        </a>
+
                         <div class="card-body">
                             <div class="row">
                                 <h4 class="col card-title">
-                                    {{ report.reported_auction.title }}
+                                    <a href="{% url 'core:description' report.reported_auction.id %}">{{ report.reported_auction.title }}</a>
                                 </h4>
                                 <div class="col text-right my-1">
                                     <a href="{% url 'core:resolve_report' report.id %}" class="btn btn-sm btn-warning">Resolve</a>
@@ -25,6 +28,7 @@
                             </div>
                             <p></p>
                             <p class="card-text">{{ report.reason }}</p>
+                            <span class="fa fa-info-circle"></span>: {{ report.reported_auction.report_count }}
                         </div>
                     </div>
                 </div>

@@ -175,6 +175,8 @@ class Auction(models.Model):
         self.save()
 
 
+
+
 class AuctionImage(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
     file = models.ImageField(upload_to=get_image_filename, validators=[auction_picture_validator])

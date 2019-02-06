@@ -9,7 +9,9 @@
                         <a href="{% url 'core:description' auction.id %}">{{ auction.title }}</a>
                     </h4>
                     <p class="card-text">{{ auction.short_description }}</p>
-                    <span id="countdown{{ auction.id }}"></span>
+                    {% if auction.state == auction.APPROVED %}
+                        <span id="countdown{{ auction.id }}"></span>
+                    {% endif %}
                 </div>
             </div>
         </div>

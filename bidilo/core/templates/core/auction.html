@@ -1,6 +1,7 @@
 {% extends "core/base.html" %}
 
 {% load bootstrap4 %}
+{% load staticfiles %}
 
 {% block content %}
     <!-- Page Content -->
@@ -97,6 +98,7 @@
                         {% endif %}
                     </p>
                 {% endif %}
+
                 <h3 class="my-3">Time till closing</h3>
                 <p><strong id="countdown"></strong></p>
                 <br/>
@@ -206,6 +208,7 @@
     {% endif %}
 
     <!-- Countdown Script -->
+
     <script type="text/javascript">
         var countdown = document.getElementById('countdown');
         var date = new Date("{{ auction.deadline.isoformat }}").getTime();
