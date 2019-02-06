@@ -173,6 +173,13 @@ class Auction(models.Model):
                                     content="Your auction '%s' has been suspended by supervisors." % self.title)
         self.state = Auction.SUSPENDED
         self.save()
+        if self.highest_bid is not None:
+            Notification.objects.create(user=self.highest_bid.owner.user,
+                                        content="Unfortunately the auction for which you had bid '%s' has been suspended."
+                                                % self.title)
+            self.highest_bid.owner.release_credit(self.highest_bid.price)
+            self.bid_set.all().delete()
+
 
 
 

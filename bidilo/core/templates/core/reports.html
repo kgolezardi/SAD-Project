@@ -20,7 +20,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <h4 class="col card-title">
-                                    <a href="{% url 'core:description' report.reported_auction.id %}">{{ report.reported_auction.title }}</a>
+                                    <a href="{% url 'core:description' report.reported_auction.id %}" target="_blank">{{ report.reported_auction.title }}</a>
                                 </h4>
                                 <div class="col text-right my-1">
                                     <a href="{% url 'core:resolve_report' report.id %}" class="btn btn-sm btn-warning">Resolve</a>

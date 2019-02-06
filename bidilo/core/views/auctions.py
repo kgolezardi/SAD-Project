@@ -96,10 +96,12 @@ def my_actions(request):
     approved_auctions = list(Auction.objects.filter(owner=customer, state=Auction.APPROVED))
     ongoing_auctions = [auction for auction in approved_auctions if not auction.finished]
     finished_auctions = [auction for auction in approved_auctions if auction.finished]
+    suspended_auctions = Auction.objects.filter(owner=customer, state=Auction.SUSPENDED)
     rejected_auctions = Auction.objects.filter(owner=customer, state=Auction.REJECTED)
     return render(request, 'core/my_auctions.html', {'pending_auctions': pending_auctions,
                                                      'ongoing_auctions': ongoing_auctions,
                                                      'finished_auctions': finished_auctions,
+                                                     'suspended_auctions': suspended_auctions,
                                                      'rejected_auctions': rejected_auctions})
 
 

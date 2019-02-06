@@ -30,6 +30,9 @@
         <h4>Finished</h4>
         {% include 'core/auctions_row.html' with auction_list=finished_auctions %}
 
+        <h4>Suspended</h4>
+        {% include 'core/auctions_row.html' with auction_list=suspended_auctions %}
+
         <h4>Rejected</h4>
         {% include 'core/auctions_row.html' with auction_list=rejected_auctions %}
 
