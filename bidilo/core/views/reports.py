@@ -5,7 +5,7 @@ from django.urls import reverse
 from core.models import Report, Auction
 
 def show_reports(request):
-    reports = sorted(Report.objects.filter(reported_auction__state=Auction.APPROVED).order_by('-date'), key=lambda r: (r.reported_auction.report_count, r.reported_auction.id), reverse=True)
+    reports = sorted(Report.objects.filter(read=False, reported_auction__state=Auction.APPROVED).order_by('-date'), key=lambda r: (r.reported_auction.report_count, r.reported_auction.id), reverse=True)
     return render(request, 'core/reports.html', context={"reports": reports})
 
 def resolve(request, report_id):
